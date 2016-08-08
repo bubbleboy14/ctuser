@@ -1,0 +1,92 @@
+user.core = {
+	_: {
+		messages: {
+			join: "great! now just check your inbox for an ocwa welcome email, click the activation link, and log in.",
+			login: "great, you're logged in"
+		}
+	},
+	login: function() {
+		var tryIt = function() {
+			if (!CT.parse.validEmail(email.value))
+				return alert("please provide a valid email");
+			var params = {
+				action: "login",
+				email: email.value,
+				password: pw.value
+			};
+			CT.net.post("/_user", params, "login failed :'(", function(u) {
+				alert(user.core._.messages.login);
+			});
+			limodal.hide();
+		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
+			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
+			limodal = new CT.modal.Modal({
+				transition: "slide",
+				content: [
+					CT.dom.node("Log In", "div", "biggest"),
+					email, pw,
+					CT.dom.button("Continue", tryIt)
+				]
+			});
+		limodal.show();
+	},
+	join: function(opts) {
+		opts = CT.merge(opts, {
+			selects: {},
+			checkboxes: {},
+			utype: "User"
+		});
+		var jmodal, tryIt = function() {
+			if (!CT.parse.validEmail(email.value))
+				return alert("please provide a valid email");
+			if (pw.value != pw2.value)
+				return alert("passwords don't match!");
+			if (!CT.parse.validPassword(pw.value))
+				return alert("password must contain at least 6 characters");
+			if (!firstName.value || !lastName.value)
+				return alert("please provide a name");
+			var params = {
+				action: "join",
+				utype: opts.utype.replace(" ", ""),
+				email: email.value,
+				password: pw.value,
+				firstName: firstName.value,
+				lastName: lastName.value,
+				extras: {}
+			};
+			for (var s in opts.selects)
+				params.extras[s] = opts.selects[s].node.value();
+			for (var c in opts.checkboxes)
+				params.extras[c] = opts.checkboxes[c].node.firstChild.checked;
+			CT.net.post("/_user", params, "join failed :(", function() {
+				alert(user.core._.messages.join);
+			});
+			jmodal.hide();
+		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
+			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
+			pw2 = CT.dom.smartField(tryIt, null, null, null, "password", ["password (again)"]),
+			firstName = CT.dom.smartField(tryIt, null, null, null, null, ["first name"]),
+			lastName = CT.dom.smartField(tryIt, null, null, null, null, ["last name"]),
+			content = [
+				CT.dom.node("Join - " + opts.utype, "div", "biggest"),
+				email, [ firstName, lastName ], [ pw, pw2 ]
+			], selkeys = Object.keys(opts.selects), chekeys = Object.keys(opts.checkboxes);
+
+		selkeys.length && content.push(selkeys.map(function(k) {
+			var obj = opts.selects[k];
+			obj.node = CT.dom.select(obj.data, null, null, obj.current, null, null, true);
+			return [CT.parse.capitalize(k), obj.node];
+		}));
+		chekeys.length && content.push(chekeys.map(function(k) {
+			var obj = opts.checkboxes[k];
+			obj.node = CT.dom.checkboxAndLabel(k, obj.isChecked, obj.label);
+			return obj.node;
+		}));
+		content.push(CT.dom.button("Continue", tryIt));
+		jmodal = new CT.modal.Modal({
+			transition: "slide",
+			content: content
+		});
+		jmodal.show();
+	}
+};
