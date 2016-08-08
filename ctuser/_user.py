@@ -12,8 +12,6 @@ def response():
         u = db.get_model(cgi_get("utype"))(email=email,
             firstName=cgi_get("firstName"), lastName=cgi_get("lastName"),
             **cgi_get("extras"))
-#            race=cgi_get("race"), gender=cgi_get("gender"),
-#            felon=cgi_get("felon"), oakland_resident=cgi_get("oaklandResident"))
         u.put() # to generate created timestamp
         u.password = db.hashpass(cgi_get("password"), u.created)
         u.put()
@@ -29,7 +27,6 @@ def response():
             body=ACTIVATE["body"], html=ACTIVATE["html"])
         redirect("/", "you did it!")
     elif action == "login":
-        # or query Worker/PermitHolder separately???
         u = User.query(User.email == cgi_get("email"),
             User.active == True).get()
         if not u or u.password != db.hashpass(cgi_get("password"), u.created):
