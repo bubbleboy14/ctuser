@@ -3,7 +3,7 @@ import os
 jsu = os.path.join("js", "user")
 dirs = [jsu]
 syms = {
-	".": ["ctuser-model.py", "_user.py"],
+	".": ["ctuser_model.py", "_user.py"],
 	"html": ["profile.html"]
 }
 syms[jsu] = ["core.js", "profile.js"]
