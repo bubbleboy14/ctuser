@@ -97,13 +97,17 @@ user.core = {
 		});
 		jmodal.show();
 	},
+	get: function() {
+		user.core._current = CT.storage.get("user");
+		return user.core._current;
+	},
 	links: function(opts) {
 		opts = CT.merge(opts, {
 			join: user.core.join,
 			login: user.core.login,
 			logout: user.core.logout
 		});
-		user.core._current = CT.storage.get("user");
+		user.core.get();
 		user.core._login_links = CT.dom.node();
 		user.core._login_links.update = function() {
 			if (user.core._current)
