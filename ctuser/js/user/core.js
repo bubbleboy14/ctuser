@@ -14,7 +14,10 @@ user.core = {
 				email: email.value,
 				password: pw.value
 			};
-			CT.net.post("/_user", params, "login failed :'(", function(u) {
+			CT.net.post("/_user", params, "login failed :'(", function(data) {
+				user.core._current = data;
+				CT.storage.set("user", data);
+				user.core._login_links.update();
 				alert(user.core._.messages.login);
 			});
 			limodal.hide();
@@ -29,6 +32,11 @@ user.core = {
 				]
 			});
 		limodal.show();
+	},
+	logout: function() {
+		user.core._current = null;
+		CT.storage.clear();
+		user.core._login_links.update();
 	},
 	join: function(opts) {
 		opts = CT.merge(opts, {
@@ -88,5 +96,26 @@ user.core = {
 			content: content
 		});
 		jmodal.show();
+	},
+	links: function(opts) {
+		opts = CT.merge(opts, {
+			join: user.core.join,
+			login: user.core.login,
+			logout: user.core.logout
+		});
+		user.core._current = CT.storage.get("user");
+		user.core._login_links = CT.dom.node();
+		user.core._login_links.update = function() {
+			if (user.core._current)
+				CT.dom.setContent(user.core._login_links, CT.dom.link("logout", opts.logout));
+			else
+				CT.dom.setContent(user.core._login_links, [
+					CT.dom.link("login", opts.login),
+					CT.dom.pad(),
+					CT.dom.link("join", opts.join)
+				]);
+		};
+		user.core._login_links.update();
+		return user.core._login_links;
 	}
 };
