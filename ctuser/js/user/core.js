@@ -39,20 +39,12 @@ user.core = {
 		user.core._login_links.update();
 	},
 	join: function(opts) {
-		opts = CT.merge(opts, {
+		opts = CT.merge(opts, { // also: tos
 			selects: {},
 			checkboxes: {},
 			utype: "User"
 		});
-		var jmodal, tryIt = function() {
-			if (!CT.parse.validEmail(email.value))
-				return alert("please provide a valid email");
-			if (pw.value != pw2.value)
-				return alert("passwords don't match!");
-			if (!CT.parse.validPassword(pw.value))
-				return alert("password must contain at least 6 characters");
-			if (!firstName.value || !lastName.value)
-				return alert("please provide a name");
+		var jmodal, postIt = function() {
 			var params = {
 				action: "join",
 				utype: opts.utype.replace(" ", ""),
@@ -70,6 +62,24 @@ user.core = {
 				alert(user.core._.messages.join);
 			});
 			jmodal.hide();
+		}, tryIt = function() {
+			if (!CT.parse.validEmail(email.value))
+				return alert("please provide a valid email");
+			if (pw.value != pw2.value)
+				return alert("passwords don't match!");
+			if (!CT.parse.validPassword(pw.value))
+				return alert("password must contain at least 6 characters");
+			if (!firstName.value || !lastName.value)
+				return alert("please provide a name");
+			if (opts.top) {
+				(new CT.modal.Prompt({
+					transition: "slide",
+					style: "confirm",
+					prompt: opts.top,
+					cb: postIt
+				})).show();
+			} else
+				postIt();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
 			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
 			pw2 = CT.dom.smartField(tryIt, null, null, null, "password", ["password (again)"]),
