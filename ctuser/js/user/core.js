@@ -71,11 +71,11 @@ user.core = {
 				return alert("password must contain at least 6 characters");
 			if (!firstName.value || !lastName.value)
 				return alert("please provide a name");
-			if (opts.top) {
+			if (opts.tos) {
 				(new CT.modal.Prompt({
 					transition: "slide",
 					style: "confirm",
-					prompt: opts.top,
+					prompt: opts.tos,
 					cb: postIt
 				})).show();
 			} else
