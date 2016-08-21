@@ -4,7 +4,8 @@ jsu = os.path.join("js", "user")
 dirs = [jsu]
 syms = {
 	".": ["_user.py"],
-	"html": ["user"]
+	"html": ["user"],
+	"img": ["user"]
 }
 syms[jsu] = ["core.js", "profile.js"]
 model = {
