@@ -8,6 +8,7 @@ class CTUser(db.TimeStampedBase):
     lastName = db.String()
     blurb = db.Text()
     img = db.Binary()
+    label = "firstName"
     _data_omit = ["password"]
 
     def fullName(self):
