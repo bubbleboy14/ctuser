@@ -107,6 +107,18 @@ user.core = {
 		});
 		jmodal.show();
 	},
+	prep: function(u) {
+		u.img = u.img || core.config.ctuser.defaults.img;
+		u.blurb = u.blurb || core.config.ctuser.defaults.blurb;
+		u.name = CT.dom.link(u.firstName + " " + u.lastName,
+			null, "/user/profile.html#" + u.key);
+		return u;
+	},
+	all: function(cb, category) {
+		CT.db.get(category || core.config.ctuser.results.model, function(users) {
+			cb(users.map(user.core.prep));
+		});
+	},
 	get: function() {
 		user.core._current = CT.storage.get("user");
 		return user.core._current;
@@ -121,7 +133,9 @@ user.core = {
 		user.core._login_links = CT.dom.node();
 		user.core._login_links.update = function() {
 			if (user.core._current)
-				CT.dom.setContent(user.core._login_links, CT.dom.link("logout", opts.logout));
+				CT.dom.setContent(user.core._login_links, [
+					opts.extras, CT.dom.link("logout", opts.logout, null, "right")
+				]);
 			else
 				CT.dom.setContent(user.core._login_links, [
 					CT.dom.link("login", opts.login),
@@ -130,6 +144,11 @@ user.core = {
 				]);
 		};
 		user.core._login_links.update();
+		user.core._login_links.opts = opts;
 		return user.core._login_links;
+	},
+	setAction: function(aname, cb) {
+		user.core._login_links.opts[aname] = cb;
 	}
 };
+core.config.header.right = user.core.links({ extras: core.config.header.right });
