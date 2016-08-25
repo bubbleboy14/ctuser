@@ -1,5 +1,8 @@
 import os
 
+copies = {
+	".": "emailTemplates.py"
+}
 syms = {
 	".": ["_user.py"],
 	"html": ["user"],
