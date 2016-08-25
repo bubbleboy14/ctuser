@@ -131,16 +131,17 @@ user.core = {
 		});
 		user.core.get();
 		user.core._login_links = CT.dom.node();
-		user.core._login_links.update = function() {
+		user.core._login_links.update = function() { // wrap cbs to avoid MouseEvents
 			if (user.core._current)
 				CT.dom.setContent(user.core._login_links, [
-					opts.extras, CT.dom.link("logout", opts.logout, null, "right")
+					opts.extras,
+					CT.dom.link("logout", function() { opts.logout(); }, null, "right")
 				]);
 			else
 				CT.dom.setContent(user.core._login_links, [
-					CT.dom.link("login", opts.login),
+					CT.dom.link("login", function() { opts.login(); }),
 					CT.dom.pad(),
-					CT.dom.link("join", opts.join)
+					CT.dom.link("join", function() { opts.join(); })
 				]);
 		};
 		user.core._login_links.update();
