@@ -1,13 +1,13 @@
 from cantools.web import respond, succeed, fail, cgi_get, redirect, send_mail
 from cantools import config
-from model import db, User
+from model import db, CTUser
 from emailTemplates import JOIN, ACTIVATE, CONTACT
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact"])
     if action == "join":
         email = cgi_get("email")
-        if User.query(User.email == email).get():
+        if CTUser.query(CTUser.email == email).get():
             fail("this email is already in use")
         u = db.get_model(cgi_get("utype"))(email=email,
             firstName=cgi_get("firstName"), lastName=cgi_get("lastName"),
@@ -27,8 +27,8 @@ def response():
             body=ACTIVATE["body"], html=ACTIVATE["html"])
         redirect("/", "you did it!")
     elif action == "login":
-        u = User.query(User.email == cgi_get("email"),
-            User.active == True).get()
+        u = CTUser.query(CTUser.email == cgi_get("email"),
+            CTUser.active == True).get()
         if not u or u.password != db.hashpass(cgi_get("password"), u.created):
             fail()
         succeed(u.data())
