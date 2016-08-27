@@ -39,15 +39,15 @@ user.core = {
 		user.core._login_links.update();
 	},
 	join: function(opts) {
-		opts = CT.merge(opts, { // also: tos
+		opts = CT.merge(opts, { // also: tos, utype
 			selects: {},
 			checkboxes: {},
-			utype: "User"
+			umodel: "ctuser"
 		});
 		var jmodal, postIt = function() {
 			var params = {
 				action: "join",
-				utype: opts.utype.replace(" ", ""),
+				utype: opts.utype && opts.utype.replace(" ", "") || opts.umodel,
 				email: email.value,
 				password: pw.value,
 				firstName: firstName.value,
@@ -86,7 +86,7 @@ user.core = {
 			firstName = CT.dom.smartField(tryIt, null, null, null, null, ["first name"]),
 			lastName = CT.dom.smartField(tryIt, null, null, null, null, ["last name"]),
 			content = [
-				CT.dom.node("Join - " + opts.utype, "div", "biggest"),
+				CT.dom.node("Join - " + (opts.utype || "User"), "div", "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
 			], selkeys = Object.keys(opts.selects), chekeys = Object.keys(opts.checkboxes);
 
