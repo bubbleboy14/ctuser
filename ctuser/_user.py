@@ -14,10 +14,13 @@ def response():
             **cgi_get("extras"))
         u.put() # to generate created timestamp
         u.password = db.hashpass(cgi_get("password"), u.created)
+        if config.mailer:
+            usk = u.key.urlsafe()
+            send_mail(to=u.email, subject="activation required",
+                body=JOIN["body"]%(usk,), html=JOIN["html"]%(usk,))
+        else: # auto-activate
+            u.active = True
         u.put()
-        usk = u.key.urlsafe()
-        send_mail(to=u.email, subject="activation required",
-            body=JOIN["body"]%(usk,), html=JOIN["html"]%(usk,))
     elif action == "activate":
         u = db.get(cgi_get("key"))
         if u and not u.active: # else, don't even trip
