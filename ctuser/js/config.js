@@ -6,5 +6,10 @@
 	},
 	"results": {
 		"model": "ctuser"
+	},
+	"access": {
+		"*": true,
+		"/user/profile.html": "user",
+		"/user/results.html": "admin"
 	}
 }
