@@ -11,5 +11,5 @@ CT.onload(function() {
 			mode: "profile",
 			defaultImg: core.config.ctuser.defaults.img
 		});
-	});
+	}, null, core.config.ctuser.results.filters);
 });
