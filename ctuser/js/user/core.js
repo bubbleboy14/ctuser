@@ -152,4 +152,6 @@ user.core = {
 		user.core._login_links.opts[aname] = cb;
 	}
 };
-core.config.header.right = user.core.links({ extras: core.config.header.right });
+core.config.header.right.push(user.core.links({
+	extras: core.config.ctuser.links
+}));
