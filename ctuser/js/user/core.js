@@ -150,8 +150,29 @@ user.core = {
 	},
 	setAction: function(aname, cb) {
 		user.core._login_links.opts[aname] = cb;
+	},
+	meetsRule: function(rule) {
+		// rule options: true, false, "user", "admin", "modelName", ["modelName1", "modelName2"]
+		if (rule == false || rule == true)
+			return rule;
+		var u = user.core.get();
+		if (!u)
+			return false;
+		if (rule == "admin")
+			return u.admin;
+		return (rule == "user") || (rule == u.modelName) || (rule.indexOf(u.modelName) != -1);
+	},
+	canAccess: function(pn) {
+		var rule = core.config.ctuser.access["*"];
+		if (pn in core.config.ctuser.access)
+			rule = core.config.ctuser.access[pn];
+		return user.core.meetsRule(rule);
 	}
 };
+
+if (!user.core.canAccess(location.pathname))
+	location = "/";
+
 core.config.header.right.push(user.core.links({
 	extras: core.config.ctuser.links
 }));
