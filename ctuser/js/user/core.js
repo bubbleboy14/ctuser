@@ -121,6 +121,7 @@ user.core = {
 	},
 	get: function() {
 		user.core._current = CT.storage.get("user");
+		user.core._current && CT.data.add(user.core._current);
 		return user.core._current;
 	},
 	links: function(opts) {
