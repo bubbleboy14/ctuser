@@ -114,10 +114,10 @@ user.core = {
 			null, "/user/profile.html#" + u.key);
 		return u;
 	},
-	all: function(cb, category) {
+	all: function(cb, category, filters) {
 		CT.db.get(category || core.config.ctuser.results.model, function(users) {
 			cb(users.map(user.core.prep));
-		});
+		}, null, null, null, filters);
 	},
 	get: function() {
 		user.core._current = CT.storage.get("user");
@@ -133,12 +133,14 @@ user.core = {
 		user.core.get();
 		user.core._login_links = CT.dom.node();
 		user.core._login_links.update = function() { // wrap cbs to avoid MouseEvents
-			if (user.core._current)
-				CT.dom.setContent(user.core._login_links, [
-					opts.extras,
-					CT.dom.link("logout", function() { opts.logout(); }, null, "right")
-				]);
-			else
+			if (user.core._current) {
+				var lz = [];
+				lz.push(opts.extras.user);
+				if (user.core._current.admin)
+					lz.push(opts.extras.admin);
+				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
+				CT.dom.setContent(user.core._login_links, lz);
+			} else
 				CT.dom.setContent(user.core._login_links, [
 					CT.dom.link("login", function() { opts.login(); }),
 					CT.dom.pad(),
