@@ -11,6 +11,18 @@
 		"model": "ctuser",
 		"filters": {}
 	},
+	"profile": {
+		"model": "ctuser",
+		"filters": {},
+		"blurs": {
+			"email": ["email"],
+			"password": ["password"],
+			"password2": ["password (again)"],
+			"firstName": ["first name"],
+			"lastName": ["last name"],
+			"blurb": ["tell us about yourself"]
+		}
+	},
 	"access": {
 		"*": true,
 		"/user/profile.html": "user",
