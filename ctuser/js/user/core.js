@@ -125,7 +125,7 @@ user.core = {
 		return user.core._current;
 	},
 	update: function(changes) {
-		for (var change in changes)
+		if (changes) for (var change in changes)
 			user.core._current[change] = changes[change];
 		CT.storage.set("user", user.core._current);
 	},
