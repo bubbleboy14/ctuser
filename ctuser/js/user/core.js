@@ -124,6 +124,11 @@ user.core = {
 		user.core._current && CT.data.add(user.core._current);
 		return user.core._current;
 	},
+	update: function(changes) {
+		for (var change in changes)
+			user.core._current[change] = changes[change];
+		CT.storage.set("user", user.core._current);
+	},
 	links: function(opts) {
 		opts = CT.merge(opts, {
 			join: user.core.join,
