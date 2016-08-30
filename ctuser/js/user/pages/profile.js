@@ -10,7 +10,7 @@ CT.onload(function() {
 		});
 	} else { // edit profile
 		var omit = ["_label", "active", "admin", "created", "index", "key", "label", "modelName", "modified"],
-			base = ["firstName", "lastName", "email"]; // also: img, blurb
+			base = ["firstName", "lastName", "email"];
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(),
 				schema = fullSchema[u.modelName],
@@ -46,13 +46,13 @@ CT.onload(function() {
 				}, greeting = CT.dom.node("Hello, " + u.firstName, "div", "biggerest"),
 				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password", blurs: blurs.password }),
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
-				blurb = fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true, classname: "w1", blurs: blurs.blurb }),
-				img = CT.db.edit.img({ data: u });
+				img = CT.db.edit.img({ data: u, cb: user.core.update });
+			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true, classname: "w1", blurs: blurs.blurb });
 			CT.dom.addContent("ctmain", CT.dom.node([
 				greeting, base.map(function(p) {
 					fields[p] = CT.dom.smartField({ id: p, cb: tryIt, blurs: blurs[p], value: u[p] });
 					return fields[p];
-				}), [pw, pw2], img, blurb, CT.dom.button("Update", tryIt)
+				}), [pw, pw2], img, fields.blurb, CT.dom.button("Update", tryIt)
 			], "div", "padded"));
 		});
 	}
