@@ -4,7 +4,7 @@ from model import db, CTUser
 from emailTemplates import JOIN, ACTIVATE, CONTACT
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit"])
     if action == "join":
         email = cgi_get("email")
         if CTUser.query(CTUser.email == email).get():
@@ -45,5 +45,11 @@ def response():
                 sender.firstName, sender.key),
             html=CONTACT["html"]%(sender.fullName(), message,
                 sender.firstName, sender.key))
+    elif action == "edit":
+        user = db.get(cgi_get("user"))
+        changes = cgi_get("changes")
+        for key, val in changes.items():
+            setattr(user, key, val)
+        user.put()
 
 respond(response)
