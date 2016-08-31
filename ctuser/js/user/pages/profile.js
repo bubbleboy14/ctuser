@@ -12,8 +12,10 @@ CT.onload(function() {
 		var omit = ["_label", "active", "admin", "created", "index", "key", "label", "modelName", "modified"],
 			base = ["firstName", "lastName", "email"];
 		CT.db.withSchema(function(fullSchema) {
-			var u = user.core.get(),
+			var u = user.core.get(), extras = [],
 				schema = fullSchema[u.modelName],
+				model = core.config.ctuser.model,
+				modopts = model[u.modelName] || model["*"],
 				blurs = core.config.ctuser.profile.blurs,
 				fields = {}, tryIt = function() {
 					var f, v, changes = {};
@@ -26,6 +28,11 @@ CT.onload(function() {
 								return alert("please provide a valid email");
 							changes[f] = v;
 						}
+					}
+					if (modopts && modopts.checkboxes) for (f in modopts.checkboxes) {
+						v = modopts.checkboxes[f].node.isChecked();
+						if (u[f] != v)
+							changes[f] = v;
 					}
 					var pwv = CT.dom.getFieldValue("pw"),
 						pw2v = CT.dom.getFieldValue("pw2");
@@ -48,11 +55,17 @@ CT.onload(function() {
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
 				img = CT.db.edit.img({ data: u, cb: user.core.update });
 			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true, classname: "w1", blurs: blurs.blurb });
+			if (modopts) {
+				user.core.fields(modopts, extras, true);
+				if (modopts.selects)
+					for (var s in modopts.selects)
+						fields[s] = modopts.selects[s].node;
+			}
 			CT.dom.addContent("ctmain", CT.dom.node([
 				greeting, base.map(function(p) {
 					fields[p] = CT.dom.smartField({ id: p, cb: tryIt, blurs: blurs[p], value: u[p] });
 					return fields[p];
-				}), [pw, pw2], img, fields.blurb, CT.dom.button("Update", tryIt)
+				}), [pw, pw2], img, fields.blurb, extras, CT.dom.button("Update", tryIt)
 			], "div", "padded"));
 		});
 	}
