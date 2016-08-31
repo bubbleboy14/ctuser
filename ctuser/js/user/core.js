@@ -43,7 +43,7 @@ user.core = {
 			noClose: true,
 			transition: "slide",
 			style: "single-choice",
-			data: core.config.ctuser.join.choices,
+			data: core.config.ctuser.model.choices,
 			cb: function(utype) {
 				opts.utype = utype;
 				user.core.join(opts);
