@@ -38,12 +38,26 @@ user.core = {
 		CT.storage.clear();
 		user.core._login_links.update();
 	},
+	_userType: function(opts) {
+		(new CT.modal.Prompt({
+			noClose: true,
+			transition: "slide",
+			style: "single-choice",
+			data: core.config.ctuser.join.choices,
+			cb: function(utype) {
+				opts.utype = utype;
+				user.core.join(opts);
+			}
+		})).show();
+	},
 	join: function(opts) {
-		opts = CT.merge(opts, { // also: tos, utype
-			selects: {},
+		opts = CT.merge(opts, core.config.ctuser.join.options, {
+			selects: {}, // also: tos, utype -- OR -- choices, options
 			checkboxes: {},
 			umodel: "ctuser"
 		});
+		if (core.config.ctuser.join.choices && !opts.utype)
+			return user.core._userType(opts);
 		var jmodal, postIt = function() {
 			var params = {
 				action: "join",
