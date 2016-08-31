@@ -54,7 +54,7 @@ user.core = {
 		if (opts && opts.utype)
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
-			return user.core._userType(opts);
+			return user.core._userType(opts || {});
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			selects: {}, // also: tos, utype
 			checkboxes: {},
