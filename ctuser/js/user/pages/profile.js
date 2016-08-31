@@ -74,7 +74,6 @@ CT.onload(function() {
 					continue;
 				var ptype = schema[p],
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
-				CT.log(p + " " + ptype);
 				if (ptype != "blob")
 					inputs.push(i);
 				extras.push(i);
