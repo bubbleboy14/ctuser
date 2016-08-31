@@ -7,9 +7,7 @@
 		"img": "/img/user/default.png",
 		"blurb": "No blurb yet!"
 	},
-	"join": {
-		"options": {}
-	},
+	"model": {},
 	"results": {
 		"model": "ctuser",
 		"filters": {}
