@@ -52,7 +52,7 @@ user.core = {
 	},
 	join: function(opts) {
 		opts = CT.merge(opts, core.config.ctuser.join.options, {
-			selects: {}, // also: tos, utype -- OR -- choices, options
+			selects: {}, // also: tos, utype
 			checkboxes: {},
 			umodel: "ctuser"
 		});
