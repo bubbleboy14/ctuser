@@ -9,10 +9,12 @@ CT.onload(function() {
 			CT.dom.addContent("ctmain", CT.layout.profile(user.core.prep(data)));
 		});
 	} else { // edit profile
-		var omit = ["_label", "active", "admin", "created", "index", "key", "label", "modelName", "modified"],
+		var omit = ["_kinds", "_label", "label", "index", "key",
+			"created", "modified", "modelName",
+			"active", "admin", "password", "img"],
 			base = ["firstName", "lastName", "email"];
 		CT.db.withSchema(function(fullSchema) {
-			var u = user.core.get(), extras = [],
+			var u = user.core.get(), extras = [], inputs = [],
 				schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = model[u.modelName] || model["*"],
@@ -34,6 +36,11 @@ CT.onload(function() {
 						if (u[f] != v)
 							changes[f] = v;
 					}
+					inputs.forEach(function(i) {
+						v = i.getValue();
+						if (u[f] != v)
+							changes[f] = v;
+					});
 					var pwv = CT.dom.getFieldValue("pw"),
 						pw2v = CT.dom.getFieldValue("pw2");
 					if (pwv || pw2v) {
@@ -60,6 +67,17 @@ CT.onload(function() {
 				if (modopts.selects)
 					for (var s in modopts.selects)
 						fields[s] = modopts.selects[s].node;
+			}
+			for (var p in schema) {
+				if ((p in fields) || (omit.indexOf(p) != -1) || (base.indexOf(p) != -1)
+					|| (modopts && modopts.checkboxes && (p in modopts.checkboxes)))
+					continue;
+				var ptype = schema[p],
+					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
+				CT.log(p + " " + ptype);
+				if (ptype != "blob")
+					inputs.push(i);
+				extras.push(i);
 			}
 			CT.dom.addContent("ctmain", CT.dom.node([
 				greeting, base.map(function(p) {
