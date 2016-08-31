@@ -133,16 +133,20 @@ user.core = {
 		opts = CT.merge(opts, {
 			join: user.core.join,
 			login: user.core.login,
-			logout: user.core.logout
+			logout: user.core.logout,
+			extras: {}
 		});
 		user.core.get();
 		user.core._login_links = CT.dom.node();
 		user.core._login_links.update = function() { // wrap cbs to avoid MouseEvents
 			if (user.core._current) {
 				var lz = [];
-				lz.push(opts.extras.user);
-				if (user.core._current.admin)
+				if (opts.extras.user)
+					lz.push(opts.extras.user);
+				if (user.core._current.admin && opts.extras.admin)
 					lz.push(opts.extras.admin);
+				if (opts.extras[user.core._current.modelName])
+					lz.push(opts.extras[user.core._current.modelName]);
 				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
 				CT.dom.setContent(user.core._login_links, lz);
 			} else
