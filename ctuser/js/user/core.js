@@ -51,13 +51,15 @@ user.core = {
 		})).show();
 	},
 	join: function(opts) {
-		opts = CT.merge(opts, core.config.ctuser.join.options, {
+		if (opts && opts.utype)
+			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
+		else if (core.config.ctuser.model.choices)
+			return user.core._userType(opts);
+		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			selects: {}, // also: tos, utype
 			checkboxes: {},
 			umodel: "ctuser"
 		});
-		if (core.config.ctuser.join.choices && !opts.utype)
-			return user.core._userType(opts);
 		var jmodal, postIt = function() {
 			var params = {
 				action: "join",
@@ -102,24 +104,29 @@ user.core = {
 			content = [
 				CT.dom.node("Join - " + (opts.utype || "User"), "div", "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
-			], selkeys = Object.keys(opts.selects), chekeys = Object.keys(opts.checkboxes);
-
-		selkeys.length && content.push(selkeys.map(function(k) {
-			var obj = opts.selects[k];
-			obj.node = CT.dom.select(obj.data, null, null, obj.current, null, null, true);
-			return [CT.parse.capitalize(k), obj.node];
-		}));
-		chekeys.length && content.push(chekeys.map(function(k) {
-			var obj = opts.checkboxes[k];
-			obj.node = CT.dom.checkboxAndLabel(k, obj.isChecked, obj.label);
-			return obj.node;
-		}));
+			];
+		user.core.fields(opts, content);
 		content.push(CT.dom.button("Continue", tryIt));
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
 			content: content
 		});
 		jmodal.show();
+	},
+	fields: function(opts, content, withUser) {
+		var selkeys = Object.keys(opts.selects), chekeys = Object.keys(opts.checkboxes);
+		selkeys.length && content.push(selkeys.map(function(k) {
+			var obj = opts.selects[k];
+			obj.node = CT.dom.select(obj.data, null, k,
+				withUser ? user.core._current[k] : obj.current, null, null, true);
+			return [CT.parse.capitalize(k), obj.node];
+		}));
+		chekeys.length && content.push(chekeys.map(function(k) {
+			var obj = opts.checkboxes[k];
+			obj.node = CT.dom.checkboxAndLabel(k,
+				withUser ? user.core._current[k] : obj.isChecked, obj.label);
+			return obj.node;
+		}));
 	},
 	prep: function(u) {
 		u.img = u.img || core.config.ctuser.defaults.img;
