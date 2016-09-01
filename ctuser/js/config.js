@@ -14,7 +14,6 @@
 	},
 	"profile": {
 		"model": "ctuser",
-		"filters": {},
 		"blurs": {
 			"email": ["email"],
 			"password": ["password"],
