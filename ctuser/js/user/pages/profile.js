@@ -61,7 +61,8 @@ CT.onload(function() {
 				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password", blurs: blurs.password }),
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
 				img = CT.db.edit.img({ data: u, cb: user.core.update });
-			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true, classname: "w1", blurs: blurs.blurb });
+			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true,
+				classname: "w1", blurs: blurs.blurb, value: u.blurb });
 			if (modopts) {
 				user.core.fields(modopts, extras, true);
 				if (modopts.selects)
