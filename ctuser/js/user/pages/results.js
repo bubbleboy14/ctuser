@@ -10,7 +10,9 @@ CT.onload(function() {
 			if (Object.keys(results).length != cfg.results.sections.length)
 				return;
 			new CT.slider.Slider({
-				frames: cfg.results.sections.map(function(s) {
+				frames: cfg.results.sections.filter(function(s) {
+					return !!results[s.name].length;
+				}).map(function(s) {
 					return {
 						label: s.name,
 						frames: results[s.name]
