@@ -1,0 +1,1 @@
+This package includes a model, a request handler, and frontend components, including a profile page and a browsing interface, for handling user accounts.
