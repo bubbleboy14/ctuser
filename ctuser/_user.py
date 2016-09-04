@@ -1,4 +1,5 @@
 from cantools.web import respond, succeed, fail, cgi_get, redirect, send_mail
+from cantools.db import edit
 from cantools import config
 from model import db, CTUser
 from emailTemplates import JOIN, ACTIVATE, CONTACT
@@ -46,10 +47,8 @@ def response():
             html=CONTACT["html"]%(sender.fullName(), message,
                 sender.firstName, sender.key))
     elif action == "edit":
-        user = db.get(cgi_get("user"))
         changes = cgi_get("changes")
-        for key, val in changes.items():
-            setattr(user, key, val)
-        user.put()
+        changes["key"] = cgi_get("user")
+        edit(changes)
 
 respond(response)

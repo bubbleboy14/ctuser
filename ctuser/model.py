@@ -12,5 +12,8 @@ class CTUser(db.TimeStampedBase):
     label = "firstName"
     _data_omit = ["password"]
 
+    def _trans_password(self, val):
+        return db.hashpass(val, self.created)
+
     def fullName(self):
         return "%s %s"%(self.firstName, self.lastName)
