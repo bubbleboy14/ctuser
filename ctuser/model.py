@@ -13,6 +13,8 @@ class CTUser(db.TimeStampedBase):
     _data_omit = ["password"]
 
     def _trans_password(self, val):
+        if not self.key:
+            self.put()
         return db.hashpass(val, self.created)
 
     def fullName(self):
