@@ -137,6 +137,7 @@ user.core = {
 	},
 	all: function(cb, category, filters) {
 		CT.db.get(category || core.config.ctuser.results.model, function(users) {
+			CT.data.addSet(users);
 			cb(users.map(user.core.prep));
 		}, null, null, null, filters);
 	},
