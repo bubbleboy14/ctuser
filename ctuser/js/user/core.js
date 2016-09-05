@@ -200,6 +200,42 @@ user.core = {
 		if (pn in core.config.ctuser.access)
 			rule = core.config.ctuser.access[pn];
 		return user.core.meetsRule(rule);
+	},
+	results: function(cfg) {
+		if (cfg.sections) {
+			var results = {}, build = function() {
+				if (Object.keys(results).length != cfg.sections.length)
+					return;
+				new CT.slider.Slider({
+					frames: cfg.sections.filter(function(s) {
+						return !!results[s.name].length;
+					}).map(function(s) {
+						return {
+							label: s.name,
+							frames: results[s.name]
+						}
+					}),
+					mode: "chunk",
+					parent: "ctmain",
+					subMode: "profile",
+					bubblePosition: "top"
+				});
+			};
+			cfg.sections.forEach(function(s) {
+				user.core.all(function(data) {
+					results[s.name] = data;
+					build();
+				}, cfg.model, CT.merge(s.filters, cfg.filters));
+			});
+		} else {
+			user.core.all(function(users) {
+				new CT.slider.Slider({
+					frames: users,
+					parent: "ctmain",
+					mode: "profile"
+				});
+			}, cfg.model, cfg.filters);
+		}
 	}
 };
 
