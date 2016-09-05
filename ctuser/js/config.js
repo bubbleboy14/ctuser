@@ -14,6 +14,9 @@
 	},
 	"profile": {
 		"model": "ctuser",
+		"omit": ["_kinds", "_label", "label", "index", "key",
+			"created", "modified", "modelName",
+			"active", "admin", "password", "img"],
 		"blurs": {
 			"email": ["email"],
 			"password": ["password"],

@@ -9,9 +9,7 @@ CT.onload(function() {
 			CT.dom.addContent("ctmain", CT.layout.profile(user.core.prep(data)));
 		});
 	} else { // edit profile
-		var omit = ["_kinds", "_label", "label", "index", "key",
-			"created", "modified", "modelName",
-			"active", "admin", "password", "img"],
+		var omit = core.config.ctuser.profile.omit,
 			base = ["firstName", "lastName", "email"];
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(), extras = [], inputs = [],
