@@ -1,5 +1,5 @@
 copies = {
-	".": "emailTemplates.py"
+	".": ["emailTemplates.py"]
 }
 syms = {
 	".": ["_user.py"],
