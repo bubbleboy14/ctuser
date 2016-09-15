@@ -169,14 +169,20 @@ user.core = {
 					lz.push(opts.extras.admin);
 				if (opts.extras[user.core._current.modelName])
 					lz.push(opts.extras[user.core._current.modelName]);
+				if (opts.extras["*"])
+					lz.push(opts.extras["*"]);
 				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
 				CT.dom.setContent(user.core._login_links, lz);
-			} else
-				CT.dom.setContent(user.core._login_links, [
+			} else {
+				var lolz = [
 					CT.dom.link("login", function() { opts.login(); }),
 					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
-				]);
+				];
+				if (opts.extras["*"])
+					lolz = [opts.extras["*"], lolz];
+				CT.dom.setContent(user.core._login_links, lolz);
+			}
 		};
 		user.core._login_links.update();
 		user.core._login_links.opts = opts;
