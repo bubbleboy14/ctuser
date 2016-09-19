@@ -12,6 +12,16 @@
 		"model": "ctuser",
 		"filters": {}
 	},
+	"messages": {
+		"blurs": {
+			"message": ["what do you think?", "what do you say?"],
+			"topic": [
+				"what is this concerning?",
+				"what is the subject of this correspondence?",
+				"what's this all about?"
+			]
+		}
+	},
 	"profile": {
 		"model": "ctuser",
 		"omit": ["_kinds", "_label", "label", "index", "key",
