@@ -1,7 +1,7 @@
 from cantools.web import respond, succeed, fail, cgi_get, redirect, send_mail
 from cantools.db import edit
 from cantools import config
-from model import db, CTUser
+from model import db, CTUser, Message, Conversation
 from emailTemplates import JOIN, ACTIVATE, CONTACT
 
 def response():
@@ -38,14 +38,26 @@ def response():
         succeed(u.data())
     elif action == "contact":
         sender = db.get(cgi_get("user"))
-        recipient = db.get(cgi_get("recipient"))
         message = cgi_get("message")
-        send_mail(to=recipient.email,
-            subject="message from %s"%(sender.firstName,),
-            body=CONTACT["body"]%(sender.fullName(), message,
-                sender.firstName, sender.key),
-            html=CONTACT["html"]%(sender.fullName(), message,
-                sender.firstName, sender.key))
+        convokey = cgi_get("conversation", required=False)
+        if convokey:
+            conversation = db.get(convokey)
+        else:
+            conversation = Conversation()
+            conversation.topic = cgi_get("topic")
+            conversation.participants = [sender.key, db.KeyWrapper(cgi_get("recipient"))]
+            conversation.put()
+        m = Message(sender=sender.key, conversation=conversation.key, body=message)
+        m.put()
+        for recipient in conversation.participants:
+            if recipient != sender.key:
+                send_mail(to=recipient.get().email,
+                    subject="message from %s"%(sender.firstName,),
+                    body=CONTACT["body"]%(sender.fullName(), message,
+                        sender.firstName, sender.key.urlsafe(), conversation.key.urlsafe()),
+                    html=CONTACT["html"]%(sender.fullName(), message,
+                        sender.key.urlsafe(), sender.firstName, conversation.key.urlsafe()))
+        succeed(convokey and m.key.urlsafe() or conversation.key.urlsafe())
     elif action == "edit":
         changes = cgi_get("changes")
         changes["key"] = cgi_get("user")
