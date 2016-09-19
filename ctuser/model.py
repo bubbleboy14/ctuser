@@ -19,3 +19,12 @@ class CTUser(db.TimeStampedBase):
 
     def fullName(self):
         return "%s %s"%(self.firstName, self.lastName)
+
+class Conversation(db.TimeStampedBase):
+    participants = db.ForeignKey(kind=CTUser, repeated=True)
+    topic = db.String()
+
+class Message(db.TimeStampedBase):
+    conversation = db.ForeignKey(kind=Conversation)
+    sender = db.ForeignKey(kind=CTUser)
+    body = db.Text()
