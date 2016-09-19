@@ -129,11 +129,21 @@ user.core = {
 		}));
 	},
 	prep: function(u) {
+		if (user.core._current && user.core._current.key == u.key)
+			return u;
 		u.img = u.img || core.config.ctuser.defaults.img;
 		u.blurb = u.blurb || core.config.ctuser.defaults.blurb;
-		u.name = CT.dom.link(u.firstName + " " + u.lastName,
-			null, "/user/profile.html#" + u.key);
+		u.buttons = u.buttons || {};
+		u.buttons.contact = u.buttons.contact || function() {
+			location = "/user/messages.html#" + u.key;
+		};
 		return u;
+	},
+	fullName: function(u, link) {
+		var fname = u.firstName + " " + u.lastName;
+		if (link)
+			return CT.dom.link(fname, null, "/user/profile.html#" + u.key);
+		return fname;
 	},
 	all: function(cb, category, filters) {
 		CT.db.get(category || core.config.ctuser.results.model, function(users) {
@@ -143,7 +153,7 @@ user.core = {
 	},
 	get: function() {
 		user.core._current = CT.storage.get("user");
-		user.core._current && CT.data.add(user.core._current);
+		user.core._current && CT.data.add(user.core.prep(user.core._current));
 		return user.core._current;
 	},
 	update: function(changes) {
@@ -243,6 +253,144 @@ user.core = {
 				});
 			}, cfg.model, cfg.filters);
 		}
+	},
+	buildConvo: function(convo) {
+		var n = CT.dom.node(), newMsg = function(m) {
+				return [
+					user.core.fullName(CT.data.get(m.sender), true),
+					CT.dom.pad(),
+					CT.dom.span(m.body)
+				];
+			}, viewConvo = function() {
+				var mnode = CT.dom.node(convo.messages.map(newMsg)),
+					inode = CT.dom.smartField({
+						classname: "w19-20",
+						blurs: core.config.ctuser.messages.blurs.message,
+						cb: function(val) {
+							val && CT.net.post("/_user", {
+								action: "contact",
+								user: user.core._current.key,
+								conversation: convo.key,
+								message: val
+							}, "comment failed!", function(mkey) {
+								var d = {
+									key: mkey,
+									sender: user.core._current.key,
+									conversation: convo.key,
+									body: val
+								};
+								CT.data.add(d);
+								convo.messages.push(d);
+								CT.dom.addContent(mnode, newMsg(d));
+								inode.value = "";
+								inode.blur();
+							});
+						}
+					});
+				CT.dom.setContent(n, [
+					CT.dom.div(convo.topic, "big bold pv10"),
+					mnode,
+					inode
+				]);
+			};
+		if (convo.messages)
+			viewConvo();
+		else {
+			CT.db.get("message", function(msgs) {
+				convo.messages = msgs;
+				viewConvo();
+			}, 1000, null, null, {
+				conversation: convo.key
+			});
+		}
+		return n;
+	},
+	messages: function() {
+		CT.db.get("conversation", function(convos) {
+			var participants = {};
+			convos.forEach(function(c) {
+				c.participants.forEach(function(p) {
+					participants[p] = true;
+				});
+			});
+			CT.db.multi(Object.keys(participants), function(pdata) {
+				pdata.forEach(user.core.prep);
+				var tl = CT.layout.listView({
+					data: convos,
+					listContent: function(convo) {
+						return user.core.fullName(CT.data.get(convo.participants.filter(function(p) {
+							return p != user.core._current.key;
+						})[0]));
+					},
+					hashcheck: function() {
+						if (location.hash) {
+							var recipient = location.hash.slice(1),
+								n = CT.dom.node();
+							CT.db.one(recipient, function(target) {
+								// already tried loading conversation - must be user
+								var startConvo = function() {
+									var tval = CT.dom.getFieldValue(topic),
+										mval = CT.dom.getFieldValue(message);
+									if (!tval || !mval)
+										return alert("please provide a topic and a message");
+									CT.net.post("/_user", {
+										action: "contact",
+										topic: tval,
+										message: mval,
+										recipient: recipient,
+										user: user.core._current.key
+									}, "message failed!", function(ckey) {
+										var c = {
+											key: ckey,
+											topic: tval,
+											participants: [
+												user.core._current.key,
+												recipient
+											],
+											messages: [
+												{ // no key, but not necessary at this point
+													body: mval,
+													conversation: ckey,
+													sender: user.core._current.key
+												}
+											]
+										};
+										CT.data.add(c);
+										tl.preAdd(c, true);
+									});
+								}, topic = CT.dom.smartField({
+									cb: startConvo,
+									classname: "w19-20",
+									blurs: core.config.ctuser.messages.blurs.topic
+								}), message = CT.dom.smartField({
+									isTA: true,
+									classname: "w19-20",
+									blurs: core.config.ctuser.messages.blurs.message
+								});
+								CT.dom.setContent(n, [
+									CT.dom.div("Contact " + target.firstName, "big bold pv10"),
+									topic,
+									CT.dom.br(),
+									message,
+									CT.dom.br(),
+									CT.dom.button("Send", startConvo)
+								]);
+							});
+							return n;
+						}
+					},
+					fallback: function() {
+						return "no messages yet!";
+					},
+					content: user.core.buildConvo
+				});
+			});
+		}, 1000, null, null, {
+			participants: {
+				comparator: "contains",
+				value: user.core._current.key
+			}
+		});
 	}
 };
 
