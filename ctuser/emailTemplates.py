@@ -39,6 +39,10 @@ Click here to see %s's profile:
 
 http://""" + config.web.domain + """/profile.html#%s
 
+Click here to respond:
+
+http://""" + config.web.domain + """/messages.html#%s
+
 Have a great day!"""
 CONTACT["html"] = """You have received the following message from %s:<br>
 <br>
@@ -46,6 +50,8 @@ CONTACT["html"] = """You have received the following message from %s:<br>
 %s<br>
 ---<br>
 <br>
-Click <a href='http://""" + config.web.domain + """/profile.html#%s'>here</a> to see %s's profile:<br>
+Click <a href='http://""" + config.web.domain + """/profile.html#%s'>here</a> to see %s's profile.<br>
+<br>
+Click <a href='http://""" + config.web.domain + """/messages.html#%s'>here</a> to respond.<br>
 <br>
 Have a great day!"""
