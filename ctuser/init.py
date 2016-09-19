@@ -8,7 +8,7 @@ syms = {
 	"js": ["user"]
 }
 model = {
-	"ctuser.model": ["CTUser"]
+	"ctuser.model": ["CTUser", "Message", "Conversation"]
 }
 routes = {
 	"/_user": "_user.py"
