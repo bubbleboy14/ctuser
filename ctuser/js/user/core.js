@@ -232,6 +232,7 @@ user.core = {
 							frames: results[s.name]
 						}
 					}),
+					arrow: cfg.arrow,
 					mode: "chunk",
 					parent: "ctmain",
 					subMode: "profile",
@@ -248,6 +249,7 @@ user.core = {
 			user.core.all(function(users) {
 				new CT.slider.Slider({
 					frames: users,
+					arrow: cfg.arrow,
 					parent: "ctmain",
 					mode: "profile"
 				});
