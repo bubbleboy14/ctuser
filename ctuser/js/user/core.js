@@ -1,7 +1,7 @@
 user.core = {
 	_: {
 		messages: {
-			join: "great! now just check your inbox for an ocwa welcome email, click the activation link, and log in.",
+			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
 			login: "great, you're logged in"
 		}
 	},
