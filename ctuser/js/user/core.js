@@ -230,7 +230,7 @@ user.core = {
 						return {
 							label: s.name,
 							frames: results[s.name]
-						}
+						};
 					}),
 					arrow: cfg.arrow,
 					mode: "chunk",
