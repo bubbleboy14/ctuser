@@ -188,9 +188,9 @@ user.core = {
 				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
 				CT.dom.setContent(user.core._login_links, lz);
 			} else {
-				var lolz = [
+				var lolz = user.core._login_links._lolz = user.core._login_links._lolz || [
 					CT.dom.link("login", function() { opts.login(); }),
-					CT.dom.pad(),
+					CT.dom.pad(2),
 					CT.dom.link("join", function() { opts.join(); })
 				];
 				if (opts.extras["*"])
