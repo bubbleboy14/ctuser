@@ -85,7 +85,7 @@ user.core = {
 				return alert("passwords don't match!");
 			if (!CT.parse.validPassword(pw.value))
 				return alert("password must contain at least 6 characters");
-			if (!firstName.value || !lastName.value)
+			if (!core.config.ctuser.profile.naked_join && (!firstName.value || !lastName.value))
 				return alert("please provide a name");
 			if (opts.tos) {
 				(new CT.modal.Prompt({
@@ -105,6 +105,10 @@ user.core = {
 				CT.dom.node("Join - " + (opts.utype || "User"), "div", "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
 			];
+		if (core.config.ctuser.profile.naked_join) {
+			firstName.classList.add("hidden");
+			lastName.classList.add("hidden");
+		}
 		user.core.fields(opts, content);
 		content.push(CT.dom.button("Continue", tryIt));
 		jmodal = new CT.modal.Modal({
