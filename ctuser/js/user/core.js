@@ -190,7 +190,7 @@ user.core = {
 			} else {
 				var lolz = user.core._login_links._lolz = user.core._login_links._lolz || [
 					CT.dom.link("login", function() { opts.login(); }),
-					CT.dom.pad(2),
+					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
 				];
 				if (opts.extras["*"])
