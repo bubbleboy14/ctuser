@@ -5,7 +5,7 @@ user.core = {
 			login: "great, you're logged in"
 		}
 	},
-	login: function() {
+	login: function(cb, fail_cb) {
 		var tryIt = function() {
 			if (!CT.parse.validEmail(email.value))
 				return alert("please provide a valid email");
@@ -19,7 +19,8 @@ user.core = {
 				CT.storage.set("user", data);
 				user.core._login_links.update();
 				alert(user.core._.messages.login);
-			});
+				cb && cb();
+			}, fail_cb);
 			limodal.hide();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
 			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
@@ -173,7 +174,7 @@ user.core = {
 			extras: {}
 		});
 		user.core.get();
-		user.core._login_links = CT.dom.node();
+		user.core._login_links = CT.dom.div(null, null, "ctll");
 		user.core._login_links.update = function() { // wrap cbs to avoid MouseEvents
 			if (user.core._current) {
 				var lz = [];
@@ -401,7 +402,7 @@ user.core = {
 };
 
 if (!user.core.canAccess(location.pathname))
-	location = "/";
+	location = core.config.ctuser.redir || "/";
 
 core.config.header.right.push(user.core.links({
 	extras: core.config.ctuser.links
