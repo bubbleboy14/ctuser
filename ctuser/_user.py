@@ -1,8 +1,20 @@
-from cantools.web import respond, succeed, fail, cgi_get, redirect, send_mail
+from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail
+from cantools.util import read
 from cantools.db import edit
 from cantools import config
 from model import db, CTUser, Message, Conversation
 from emailTemplates import JOIN, ACTIVATE, CONTACT
+
+def getWPmails():
+    import MySQLdb
+    h, u, p, d = read(".c").strip().split("|")
+    log("extracting email list from WP", 1)
+    conn = MySQLdb.connect(host=h, user=u, passwd=p, db=d)
+    cur = conn.cursor()
+    cur.execute("SELECT user_email FROM wp_users")
+    rowz = cur.fetchall()
+    log("found %s recipients"%(len(rowz),), 1)
+    return [r[0] for r in rowz]
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email"])
@@ -64,8 +76,16 @@ def response():
         sender = db.get(cgi_get("user"))
         if not sender.admin:
             fail()
-        recips = cgi_get("recipients", default=["mario.balibrera@gmail.com"])
+        subject = cgi_get("subject")
+        body = cgi_get("body")
+        recips = cgi_get("recipients", default=[])
+        if not recips:
+            if config.wpmail:
+                log("no recipients specified -- WP mode enabled -- building recipient list...")
+                recips = getWPmails()
+            else:
+                fail("no recipients specified -- can't email nobody")
         for recip in recips:
-            send_mail(to=recip, subject=cgi_get("subject"), body=cgi_get("body"))
+            send_mail(to=recip, subject=subject, body=body)
 
 respond(response)
