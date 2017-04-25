@@ -1,5 +1,5 @@
 from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail
-from cantools.util import read
+from cantools.util import read, batch
 from cantools.db import edit
 from cantools import config
 from model import db, CTUser, Message, Conversation
@@ -83,6 +83,7 @@ def response():
                 recips = getWPmails()
             else:
                 fail("no recipients specified -- can't email nobody")
-        send_mail(bcc=recips, subject=cgi_get("subject"), body=cgi_get("body"))
+        batch(recips, lambda chunk : send_mail(bcc=chunk,
+            subject=cgi_get("subject"), body=cgi_get("body")), chunk=100)
 
 respond(response)
