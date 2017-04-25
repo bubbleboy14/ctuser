@@ -405,7 +405,7 @@ user.core = {
 			blurs: ["subject", "title"]
 		}), body = CT.dom.smartField({
 			isTA: true,
-			classname: "w1 mt20 hmin200p",
+			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
 		});
 		CT.dom.setContent("ctmain", CT.dom.div([
