@@ -398,6 +398,36 @@ user.core = {
 				value: user.core._current.key
 			}
 		});
+	},
+	email: function() {
+		var subject = CT.dom.smartField({
+			classname: "w1",
+			blurs: ["subject", "title"]
+		}), body = CT.dom.smartField({
+			isTA: true,
+			classname: "w1 mt20 hmin200p",
+			blurs: ["email body", "write your message here"]
+		});
+		CT.dom.setContent("ctmain", CT.dom.div([
+			CT.dom.div("Send an Email!", "biggest padded centered"),
+			subject,
+			body,
+			CT.dom.button("send it!", function() {
+				CT.net.post({
+					spinner: true,
+					path: "/_user",
+					params: {
+						action: "email",
+						user: user.core._current.key,
+						subject: CT.dom.getFieldValue(subject),
+						body: CT.dom.getFieldValue(body)
+					},
+					cb: function() {
+						alert("you did it!")
+					}
+				});
+			})
+		], "padded"));
 	}
 };
 
