@@ -76,8 +76,6 @@ def response():
         sender = db.get(cgi_get("user"))
         if not sender.admin:
             fail()
-        subject = cgi_get("subject")
-        body = cgi_get("body")
         recips = cgi_get("recipients", default=[])
         if not recips:
             if config.wpmail:
@@ -85,7 +83,6 @@ def response():
                 recips = getWPmails()
             else:
                 fail("no recipients specified -- can't email nobody")
-        for recip in recips:
-            send_mail(to=recip, subject=subject, body=body)
+        send_mail(bcc=recips, subject=cgi_get("subject"), body=cgi_get("body"))
 
 respond(response)
