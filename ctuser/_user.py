@@ -2,9 +2,9 @@ from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_ma
 from cantools.util import read, batch
 from cantools.db import edit
 from cantools import config
+from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation
 from emailTemplates import JOIN, ACTIVATE, CONTACT
-from util import getWPmails
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email"])
