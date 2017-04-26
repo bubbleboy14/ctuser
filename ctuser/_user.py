@@ -1,5 +1,5 @@
 from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail
-from cantools.util import read, batch
+from cantools.util import batch
 from cantools.db import edit
 from cantools import config
 from ctuser.util import getWPmails

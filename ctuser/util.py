@@ -1,3 +1,5 @@
+from cantools.util import read
+
 def getWPmails():
     import MySQLdb
     h, u, p, d = read(".c").strip().split("|")
