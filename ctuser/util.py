@@ -1,4 +1,4 @@
-from cantools.util import read
+from cantools.util import log, read
 
 def getWPmails():
     import MySQLdb
