@@ -51,7 +51,7 @@ user.core = {
 			}
 		})).show();
 	},
-	join: function(opts) {
+	join: function(opts, postRedir) {
 		if (opts && opts.utype)
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
@@ -77,6 +77,8 @@ user.core = {
 				params.extras[c] = opts.checkboxes[c].node.firstChild.checked;
 			CT.net.post("/_user", params, "join failed :(", function() {
 				alert(user.core._.messages.join);
+				if (postRedir)
+					window.location = postRedir;
 			});
 			jmodal.hide();
 		}, tryIt = function() {
