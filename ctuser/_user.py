@@ -24,6 +24,7 @@ def response():
         else: # auto-activate
             u.active = True
         u.put()
+        succeed(u.data())
     elif action == "activate":
         u = db.get(cgi_get("key"))
         if u and not u.active: # else, don't even trip
