@@ -4,10 +4,22 @@ user.core = {
 			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
 			login: "great, you're logged in"
 		},
+		userType: function(opts) {
+			(new CT.modal.Prompt({
+				noClose: true,
+				transition: "slide",
+				style: "single-choice",
+				data: core.config.ctuser.model.choices,
+				cb: function(utype) {
+					opts.utype = utype;
+					user.core.join(opts);
+				}
+			})).show();
+		},
 		login: function(data, cb) {
-			user.core._current = data;
+			user.core._.current = data;
 			CT.storage.set("user", data);
-			user.core._login_links.update();
+			user.core._.login_links.update();
 			alert(user.core._.messages.login);
 			cb && cb();
 		}
@@ -38,27 +50,15 @@ user.core = {
 		limodal.show();
 	},
 	logout: function() {
-		user.core._current = null;
+		user.core._.current = null;
 		CT.storage.clear();
-		user.core._login_links.update();
-	},
-	_userType: function(opts) {
-		(new CT.modal.Prompt({
-			noClose: true,
-			transition: "slide",
-			style: "single-choice",
-			data: core.config.ctuser.model.choices,
-			cb: function(utype) {
-				opts.utype = utype;
-				user.core.join(opts);
-			}
-		})).show();
+		user.core._.login_links.update();
 	},
 	join: function(opts, postRedir) {
 		if (opts && opts.utype)
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
-			return user.core._userType(opts || {});
+			return user.core._.userType(opts || {});
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			selects: {}, // also: tos, utype
 			checkboxes: {},
@@ -129,18 +129,18 @@ user.core = {
 		selkeys.length && content.push(selkeys.map(function(k) {
 			var obj = opts.selects[k];
 			obj.node = CT.dom.select(obj.data, null, k,
-				withUser ? user.core._current[k] : obj.current, null, null, true);
+				withUser ? user.core._.current[k] : obj.current, null, null, true);
 			return [CT.parse.capitalize(k), obj.node];
 		}));
 		chekeys.length && content.push(chekeys.map(function(k) {
 			var obj = opts.checkboxes[k];
 			obj.node = CT.dom.checkboxAndLabel(k,
-				withUser ? user.core._current[k] : obj.isChecked, obj.label);
+				withUser ? user.core._.current[k] : obj.isChecked, obj.label);
 			return obj.node;
 		}));
 	},
 	prep: function(u) {
-		if (user.core._current && user.core._current.key == u.key)
+		if (user.core._.current && user.core._.current.key == u.key)
 			return u;
 		u.img = u.img || core.config.ctuser.defaults.img;
 		u.blurb = u.blurb || core.config.ctuser.defaults.blurb;
@@ -163,14 +163,14 @@ user.core = {
 		}, null, null, null, filters);
 	},
 	get: function() {
-		user.core._current = CT.storage.get("user");
-		user.core._current && CT.data.add(user.core.prep(user.core._current));
-		return user.core._current;
+		user.core._.current = CT.storage.get("user");
+		user.core._.current && CT.data.add(user.core.prep(user.core._.current));
+		return user.core._.current;
 	},
 	update: function(changes) {
 		if (changes) for (var change in changes)
-			user.core._current[change] = changes[change];
-		CT.storage.set("user", user.core._current);
+			user.core._.current[change] = changes[change];
+		CT.storage.set("user", user.core._.current);
 	},
 	links: function(opts) {
 		opts = CT.merge(opts, {
@@ -180,37 +180,37 @@ user.core = {
 			extras: {}
 		});
 		user.core.get();
-		user.core._login_links = CT.dom.div(null, null, "ctll");
-		user.core._login_links.update = function() { // wrap cbs to avoid MouseEvents
-			if (user.core._current) {
+		user.core._.login_links = CT.dom.div(null, null, "ctll");
+		user.core._.login_links.update = function() { // wrap cbs to avoid MouseEvents
+			if (user.core._.current) {
 				var lz = [];
 				if (opts.extras.user)
 					lz.push(opts.extras.user);
-				if (user.core._current.admin && opts.extras.admin)
+				if (user.core._.current.admin && opts.extras.admin)
 					lz.push(opts.extras.admin);
-				if (opts.extras[user.core._current.modelName])
-					lz.push(opts.extras[user.core._current.modelName]);
+				if (opts.extras[user.core._.current.modelName])
+					lz.push(opts.extras[user.core._.current.modelName]);
 				if (opts.extras["*"])
 					lz.push(opts.extras["*"]);
 				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
-				CT.dom.setContent(user.core._login_links, lz);
+				CT.dom.setContent(user.core._.login_links, lz);
 			} else {
-				var lolz = user.core._login_links._lolz = user.core._login_links._lolz || [
+				var lolz = user.core._.login_links._lolz = user.core._.login_links._lolz || [
 					CT.dom.link("login", function() { opts.login(); }),
 					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
 				];
 				if (opts.extras["*"])
 					lolz = [opts.extras["*"], lolz];
-				CT.dom.setContent(user.core._login_links, lolz);
+				CT.dom.setContent(user.core._.login_links, lolz);
 			}
 		};
-		user.core._login_links.update();
-		user.core._login_links.opts = opts;
-		return user.core._login_links;
+		user.core._.login_links.update();
+		user.core._.login_links.opts = opts;
+		return user.core._.login_links;
 	},
 	setAction: function(aname, cb) {
-		user.core._login_links.opts[aname] = cb;
+		user.core._.login_links.opts[aname] = cb;
 	},
 	meetsRule: function(rule) {
 		// rule options: true, false, "user", "admin", "modelName", ["modelName1", "modelName2"]
@@ -282,13 +282,13 @@ user.core = {
 						cb: function(val) {
 							val && CT.net.post("/_user", {
 								action: "contact",
-								user: user.core._current.key,
+								user: user.core._.current.key,
 								conversation: convo.key,
 								message: val
 							}, "comment failed!", function(mkey) {
 								var d = {
 									key: mkey,
-									sender: user.core._current.key,
+									sender: user.core._.current.key,
 									conversation: convo.key,
 									body: val
 								};
@@ -332,7 +332,7 @@ user.core = {
 					data: convos,
 					listContent: function(convo) {
 						return user.core.fullName(CT.data.get(convo.participants.filter(function(p) {
-							return p != user.core._current.key;
+							return p != user.core._.current.key;
 						})[0]));
 					},
 					hashcheck: function() {
@@ -351,20 +351,20 @@ user.core = {
 										topic: tval,
 										message: mval,
 										recipient: recipient,
-										user: user.core._current.key
+										user: user.core._.current.key
 									}, "message failed!", function(ckey) {
 										var c = {
 											key: ckey,
 											topic: tval,
 											participants: [
-												user.core._current.key,
+												user.core._.current.key,
 												recipient
 											],
 											messages: [
 												{ // no key, but not necessary at this point
 													body: mval,
 													conversation: ckey,
-													sender: user.core._current.key
+													sender: user.core._.current.key
 												}
 											]
 										};
@@ -401,7 +401,7 @@ user.core = {
 		}, 1000, null, null, {
 			participants: {
 				comparator: "contains",
-				value: user.core._current.key
+				value: user.core._.current.key
 			}
 		});
 	},
@@ -424,7 +424,7 @@ user.core = {
 					path: "/_user",
 					params: {
 						action: "email",
-						user: user.core._current.key,
+						user: user.core._.current.key,
 						subject: CT.dom.getFieldValue(subject),
 						body: CT.dom.getFieldValue(body)
 					},
