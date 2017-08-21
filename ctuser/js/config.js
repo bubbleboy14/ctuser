@@ -12,6 +12,11 @@
 		"model": "ctuser",
 		"filters": {}
 	},
+	"register": {
+		"password": false,
+		"model": "ctuser",
+		"redirect": "/"
+	},
 	"messages": {
 		"blurs": {
 			"message": ["what do you think?", "what do you say?"],
