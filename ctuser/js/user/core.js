@@ -3,6 +3,13 @@ user.core = {
 		messages: {
 			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
 			login: "great, you're logged in"
+		},
+		login: function(data, cb) {
+			user.core._current = data;
+			CT.storage.set("user", data);
+			user.core._login_links.update();
+			alert(user.core._.messages.login);
+			cb && cb();
 		}
 	},
 	login: function(cb, fail_cb) {
@@ -15,11 +22,7 @@ user.core = {
 				password: pw.value
 			};
 			CT.net.post("/_user", params, "login failed :'(", function(data) {
-				user.core._current = data;
-				CT.storage.set("user", data);
-				user.core._login_links.update();
-				alert(user.core._.messages.login);
-				cb && cb();
+				user.core._.login(data, cb);
 			}, fail_cb);
 			limodal.hide();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
@@ -75,8 +78,9 @@ user.core = {
 				params.extras[s] = opts.selects[s].node.value();
 			for (var c in opts.checkboxes)
 				params.extras[c] = opts.checkboxes[c].node.firstChild.checked;
-			CT.net.post("/_user", params, "join failed :(", function() {
+			CT.net.post("/_user", params, "join failed :(", function(data) {
 				alert(user.core._.messages.join);
+				user.core._.login(data);
 				if (postRedir)
 					window.location = postRedir;
 			});
