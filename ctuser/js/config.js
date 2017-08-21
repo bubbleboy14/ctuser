@@ -40,6 +40,7 @@
 	"access": {
 		"*": true,
 		"/user/profile.html": "user",
-		"/user/results.html": "admin"
+		"/user/results.html": "admin",
+		"/user/email.html": "admin"
 	}
 }
