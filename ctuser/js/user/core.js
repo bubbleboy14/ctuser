@@ -219,9 +219,7 @@ user.core = {
 		var u = user.core.get();
 		if (!u)
 			return false;
-		if (rule == "admin")
-			return u.admin;
-		return (rule == "user") || (rule == u.modelName) || (rule.indexOf(u.modelName) != -1);
+		return (rule == "user") || (rule.indexOf("admin") != -1 && u.admin) || (rule.indexOf(u.modelName) != -1);
 	},
 	canAccess: function(pn) {
 		var rule = core.config.ctuser.access["*"];
