@@ -19,7 +19,9 @@ This package includes a model, a request handler, and frontend components, inclu
     routes = {
     	"/_user": "_user.py"
     }
-    
+    cfg = {
+    	"activation": "auto" # or "confirm" or [email_address] -- requires config.mailer
+    }
 
 # Front (JS Config)
 
@@ -38,6 +40,11 @@ This package includes a model, a request handler, and frontend components, inclu
     	"results": {
     		"model": "ctuser",
     		"filters": {}
+    	},
+    	"register": {
+    		"password": false,
+    		"model": "ctuser",
+    		"redirect": "/"
     	},
     	"messages": {
     		"blurs": {
@@ -67,6 +74,7 @@ This package includes a model, a request handler, and frontend components, inclu
     	"access": {
     		"*": true,
     		"/user/profile.html": "user",
-    		"/user/results.html": "admin"
+    		"/user/results.html": "admin",
+    		"/user/email.html": "admin"
     	}
     }
