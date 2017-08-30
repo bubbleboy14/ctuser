@@ -12,21 +12,22 @@ def response():
         email = cgi_get("email")
         if CTUser.query(CTUser.email == email).get():
             fail("this email is already in use")
-        u = db.get_model(cgi_get("utype"))(email=email,
+        user_type = cgi_get("utype")
+        u = db.get_model(user_type)(email=email,
             firstName=cgi_get("firstName"), lastName=cgi_get("lastName"),
             **cgi_get("extras"))
         u.put() # to generate created timestamp
         u.password = db.hashpass(cgi_get("password"), u.created)
-        if config.ctuser.activation == "auto":
+        rule = config.ctuser.activation.get(user_type, config.ctuser.activation.ctuser)
+        if rule == "auto":
             u.active = True
         else: # assumes config.mailer (otherwise, don't change activation "auto" default)
             usk = u.key.urlsafe()
-            if config.ctuser.activation == "confirm":
+            if rule == "confirm":
                 send_mail(to=u.email, subject="activation required",
                     body=JOIN%(usk,))
             else: # email admin to handle it
-                send_mail(to=config.ctuser.activation,
-                    subject="activation required", body=JOINED%(email, usk))
+                send_mail(to=rule, subject="activation required", body=JOINED%(email, usk))
         u.put()
         succeed(u.data())
     elif action == "activate":

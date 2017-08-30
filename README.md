@@ -20,7 +20,9 @@ This package includes a model, a request handler, and frontend components, inclu
     	"/_user": "_user.py"
     }
     cfg = {
-    	"activation": "auto" # or "confirm" or [email_address] -- requires config.mailer
+    	"activation": { # activation rules per user type
+    		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
+    	}
     }
 
 # Front (JS Config)
