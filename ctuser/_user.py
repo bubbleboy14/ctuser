@@ -4,7 +4,7 @@ from cantools.db import edit
 from cantools import config
 from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation
-from emailTemplates import JOIN, ACTIVATE, CONTACT
+from emailTemplates import JOIN, JOINED, ACTIVATE, CONTACT
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email"])
@@ -17,12 +17,16 @@ def response():
             **cgi_get("extras"))
         u.put() # to generate created timestamp
         u.password = db.hashpass(cgi_get("password"), u.created)
-        if config.mailer:
-            usk = u.key.urlsafe()
-            send_mail(to=u.email, subject="activation required",
-                body=JOIN%(usk,))
-        else: # auto-activate
+        if config.ctuser.activation == "auto":
             u.active = True
+        else: # assumes config.mailer (otherwise, don't change activation "auto" default)
+            usk = u.key.urlsafe()
+            if config.ctuser.activation == "confirm":
+                send_mail(to=u.email, subject="activation required",
+                    body=JOIN%(usk,))
+            else: # email admin to handle it
+                send_mail(to=config.ctuser.activation,
+                    subject="activation required", body=JOINED%(email, usk))
         u.put()
         succeed(u.data())
     elif action == "activate":
