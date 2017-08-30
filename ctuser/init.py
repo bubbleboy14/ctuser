@@ -14,5 +14,5 @@ routes = {
 	"/_user": "_user.py"
 }
 cfg = {
-	"activation": "auto" # or "user" or [email_address] -- requires config.mailer
+	"activation": "auto" # or "confirm" or [email_address] -- requires config.mailer
 }
