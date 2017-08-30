@@ -6,6 +6,14 @@ Please click <a href='http://""" + config.web.domain + """/user?action=activate&
 
 That's it!"""
 
+JOINED = """Hello!
+
+Someone just applied for membership: %s
+
+Please click <a href='http://""" + config.web.domain + """/user?action=activate&key=%s'>here</a> when you're ready to activate this account.
+
+That's it!"""
+
 ACTIVATE = """Your account is now active.
 
 Click <a href='http://""" + config.web.domain + """/'>here</a> to log in.
