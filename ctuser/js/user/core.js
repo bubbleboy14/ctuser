@@ -162,10 +162,10 @@ user.core = {
 			cb(users.map(user.core.prep));
 		}, null, null, null, filters);
 	},
-	get: function() {
-		user.core._.current = CT.storage.get("user");
-		user.core._.current && CT.data.add(user.core.prep(user.core._.current));
-		return user.core._.current;
+	get: function(attr) {
+		var u = user.core._.current = CT.storage.get("user");
+		u && CT.data.add(user.core.prep(u));
+		return (u && attr) ? u[attr] : u;
 	},
 	update: function(changes) {
 		if (changes) for (var change in changes)
