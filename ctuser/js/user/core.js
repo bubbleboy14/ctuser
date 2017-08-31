@@ -252,7 +252,7 @@ user.core = {
 				user.core.all(function(data) {
 					results[s.name] = data;
 					build();
-				}, cfg.model, CT.merge(s.filters, cfg.filters));
+				}, s.model || cfg.model, CT.merge(s.filters, cfg.filters));
 			});
 		} else {
 			user.core.all(function(users) {
