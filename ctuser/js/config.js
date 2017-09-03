@@ -44,8 +44,9 @@
 	},
 	"access": {
 		"*": true,
-		"/user/profile.html": "user",
+		"/edit": "admin",
+		"/user/email.html": "admin",
 		"/user/results.html": "admin",
-		"/user/email.html": "admin"
+		"/user/profile.html": "user"
 	}
 }

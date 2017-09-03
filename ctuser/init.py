@@ -18,3 +18,4 @@ cfg = {
 		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
 	}
 }
+requires = ["ctedit"]
