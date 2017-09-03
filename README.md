@@ -24,6 +24,7 @@ This package includes a model, a request handler, and frontend components, inclu
     		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
     	}
     }
+    requires = ["ctedit"]
 
 # Front (JS Config)
 
@@ -75,8 +76,9 @@ This package includes a model, a request handler, and frontend components, inclu
     	},
     	"access": {
     		"*": true,
-    		"/user/profile.html": "user",
+    		"/edit": "admin",
+    		"/user/email.html": "admin",
     		"/user/results.html": "admin",
-    		"/user/email.html": "admin"
+    		"/user/profile.html": "user"
     	}
     }
