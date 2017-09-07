@@ -18,4 +18,10 @@ cfg = {
 		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
 	}
 }
+util = """
+// ctuser extras
+core.util._needsUser = ["/edit"]; // supplement as necessary
+if (core.util._needsUser.indexOf(location.pathname) != -1)
+	CT.require("user.core", true);
+"""
 requires = ["ctedit"]
