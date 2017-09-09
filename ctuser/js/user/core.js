@@ -196,7 +196,9 @@ user.core = {
 				CT.dom.setContent(user.core._.login_links, lz);
 			} else {
 				var lolz = user.core._.login_links._lolz = user.core._.login_links._lolz || [
-					CT.dom.link("login", function() { opts.login(); }),
+					CT.dom.link("login", function() {
+						opts.login(core.config.ctuser.login_cb, core.config.ctuser.login_eb);
+					}),
 					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
 				];
