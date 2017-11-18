@@ -192,7 +192,10 @@ user.core = {
 					lz.push(opts.extras[user.core._.current.modelName]);
 				if (opts.extras["*"])
 					lz.push(opts.extras["*"]);
-				lz.push(CT.dom.link("logout", function() { opts.logout(); }, null, "right"));
+				lz.push(CT.dom.link("logout", function() {
+					core.config.ctuser.logout_cb && core.config.ctuser.logout_cb();
+					opts.logout();
+				}, null, "right"));
 				CT.dom.setContent(user.core._.login_links, lz);
 			} else {
 				var lolz = user.core._.login_links._lolz = user.core._.login_links._lolz || [
