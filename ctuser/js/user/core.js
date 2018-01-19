@@ -54,7 +54,7 @@ user.core = {
 		CT.storage.clear();
 		user.core._.login_links.update();
 	},
-	join: function(opts, postRedir) {
+	join: function(opts, postRedir, nologin) {
 		if (opts && opts.utype)
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
@@ -80,7 +80,8 @@ user.core = {
 				params.extras[c] = opts.checkboxes[c].node.firstChild.checked;
 			CT.net.post("/_user", params, "join failed :(", function(data) {
 				alert(user.core._.messages.join);
-				user.core._.login(data);
+				if (!nologin)
+					user.core._.login(data);
 				if (postRedir)
 					window.location = postRedir;
 			});

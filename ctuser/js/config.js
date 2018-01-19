@@ -15,7 +15,8 @@
 	"register": {
 		"password": false,
 		"model": "ctuser",
-		"redirect": "/"
+		"redirect": "/",
+		"nologin": false
 	},
 	"messages": {
 		"blurs": {

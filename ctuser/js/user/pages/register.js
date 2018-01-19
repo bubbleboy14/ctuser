@@ -6,7 +6,7 @@ CT.onload(function() {
 	CT.initCore();
 	var cfg = core.config.ctuser.register, _join = function() {
 		user.core.join(cfg.model && cfg.model != "ctuser"
-			&& { utype: cfg.model }, cfg.redirect);
+			&& { utype: cfg.model }, cfg.redirect, cfg.nologin);
 	};
 	if (cfg.password) {
 		(new CT.modal.Prompt({
