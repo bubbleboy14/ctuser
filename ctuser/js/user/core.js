@@ -228,10 +228,13 @@ user.core = {
 		return (rule == "user") || (rule.indexOf("admin") != -1 && u.admin) || (rule.indexOf(u.modelName) != -1);
 	},
 	canAccess: function(pn) {
-		var rule = core.config.ctuser.access["*"];
-		if (pn in core.config.ctuser.access)
-			rule = core.config.ctuser.access[pn];
-		return user.core.meetsRule(rule);
+		var access = core.config.ctuser.access,
+			p, rule = access["*"];
+		for (p in access) {
+			if (p.endsWith("*") && pn.startsWith(p.slice(0, -1)))
+				rule = access[p];
+		}
+		return user.core.meetsRule(access[pn] || rule);
 	},
 	results: function(cfg) {
 		if (cfg.sections) {
