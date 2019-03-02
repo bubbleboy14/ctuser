@@ -49,5 +49,6 @@
 		"/user/email.html": "admin",
 		"/user/results.html": "admin",
 		"/user/profile.html": "user"
-	}
+	},
+	"autoEdit": true
 }
