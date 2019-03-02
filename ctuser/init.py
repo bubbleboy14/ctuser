@@ -20,7 +20,7 @@ cfg = {
 }
 util = """
 // ctuser extras
-core.util._needsUser = ["/edit"]; // supplement as necessary
+core.util._needsUser = ["/edit", "/edit/style.html"]; // supplement as necessary
 if (core.util._needsUser.indexOf(location.pathname) != -1)
 	CT.require("user.core", true);
 """
