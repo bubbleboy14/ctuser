@@ -450,3 +450,6 @@ if (!user.core.canAccess(location.pathname))
 core.config.header.right.push(user.core.links({
 	extras: core.config.ctuser.links
 }));
+
+if (core.config.ctuser.autoEdit && core.config.ctedit.autoStyle)
+	CT.require("edit.core", true);
