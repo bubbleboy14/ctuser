@@ -60,6 +60,7 @@ user.core = {
 		else if (core.config.ctuser.model.choices)
 			return user.core._.userType(opts || {});
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
+			fields: {},
 			selects: {}, // also: tos, utype
 			checkboxes: {},
 			umodel: "ctuser"
@@ -74,6 +75,8 @@ user.core = {
 				lastName: lastName.value,
 				extras: {}
 			};
+			for (var f in opts.fields)
+				params.extras[f] = CT.dom.getFieldValue(opts.fields[f].node);
 			for (var s in opts.selects)
 				params.extras[s] = opts.selects[s].node.value();
 			for (var c in opts.checkboxes)
@@ -126,7 +129,14 @@ user.core = {
 		jmodal.show();
 	},
 	fields: function(opts, content, withUser) {
-		var selkeys = Object.keys(opts.selects), chekeys = Object.keys(opts.checkboxes);
+		var fiekeys = Object.keys(opts.fields),
+			selkeys = Object.keys(opts.selects),
+			chekeys = Object.keys(opts.checkboxes);
+		fiekeys.length && content.push(fiekeys.map(function(f) {
+			var obj = opts.fields[f];
+			obj.node = CT.dom.smartField({ blurs: obj.blurs });
+			return obj.node;
+		}));
 		selkeys.length && content.push(selkeys.map(function(k) {
 			var obj = opts.selects[k];
 			obj.node = CT.dom.select(obj.data, null, k,
