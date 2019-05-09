@@ -183,7 +183,7 @@ user.core = {
 			user.core._.current[change] = changes[change];
 		CT.storage.set("user", user.core._.current);
 	},
-	links: function(opts) {
+	links: function(opts, bare) {
 		opts = CT.merge(opts, {
 			join: user.core.join,
 			login: user.core.login,
@@ -193,16 +193,21 @@ user.core = {
 		user.core.get();
 		user.core._.login_links = CT.dom.div(null, null, "ctll");
 		user.core._.login_links.update = function() { // wrap cbs to avoid MouseEvents
-			if (user.core._.current) {
+			var u = user.core._.current;
+			if (u) {
 				var lz = [];
-				if (opts.extras.user)
-					lz.push(opts.extras.user);
-				if (user.core._.current.admin && opts.extras.admin)
-					lz.push(opts.extras.admin);
-				if (opts.extras[user.core._.current.modelName])
-					lz.push(opts.extras[user.core._.current.modelName]);
-				if (opts.extras["*"])
-					lz.push(opts.extras["*"]);
+				if (bare)
+					lz.push("hi, " + u.email);
+				else {
+					if (opts.extras.user)
+						lz.push(opts.extras.user);
+					if (u.admin && opts.extras.admin)
+						lz.push(opts.extras.admin);
+					if (opts.extras[u.modelName])
+						lz.push(opts.extras[u.modelName]);
+					if (opts.extras["*"])
+						lz.push(opts.extras["*"]);
+				}
 				lz.push(CT.dom.link("logout", function() {
 					core.config.ctuser.logout_cb && core.config.ctuser.logout_cb();
 					opts.logout();
@@ -216,7 +221,7 @@ user.core = {
 					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
 				];
-				if (opts.extras["*"])
+				if (!bare && opts.extras["*"])
 					lolz = [opts.extras["*"], lolz];
 				CT.dom.setContent(user.core._.login_links, lolz);
 			}
