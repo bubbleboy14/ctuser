@@ -17,12 +17,17 @@ user.core = {
 			})).show();
 		},
 		login: function(data, cb) {
-			user.core._.current = data;
+			var _ = user.core._;
+			_.current = data;
 			CT.storage.set("user", data);
-			user.core._.login_links.update();
-			alert(user.core._.messages.login);
+			_.login_links.update();
+			alert(_.messages.login);
 			cb && cb();
+			_.onchange && _.onchange();
 		}
+	},
+	onchange: function(cb) {
+		user.core._.onchange = cb;
 	},
 	login: function(cb, fail_cb) {
 		var tryIt = function() {
@@ -50,9 +55,11 @@ user.core = {
 		limodal.show();
 	},
 	logout: function() {
-		user.core._.current = null;
+		var _ = user.core._;
+		_.current = null;
 		CT.storage.clear();
-		user.core._.login_links.update();
+		_.login_links.update();
+		_.onchange && _.onchange();
 	},
 	join: function(opts, postRedir, nologin) {
 		if (opts && opts.utype)
