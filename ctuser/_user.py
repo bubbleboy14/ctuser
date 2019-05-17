@@ -29,6 +29,8 @@ def response():
             else: # email admin to handle it
                 send_mail(to=rule, subject="activation required", body=JOINED%(email, usk))
         u.put()
+        if hasattr(u, "onjoin"):
+            u.onjoin()
         succeed(u.data())
     elif action == "activate":
         u = db.get(cgi_get("key"))
