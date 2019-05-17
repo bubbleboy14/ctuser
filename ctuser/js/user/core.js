@@ -66,11 +66,13 @@ user.core = {
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
 			return user.core._.userType(opts || {});
+		var jcfg = core.config.ctuser.join,
+			umod = jcfg && jcfg.model || "ctuser";
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			fields: {},
 			selects: {}, // also: tos, utype
 			checkboxes: {},
-			umodel: "ctuser"
+			umodel: umod
 		});
 		var jmodal, postIt = function() {
 			var params = {
