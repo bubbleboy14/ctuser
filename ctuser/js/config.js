@@ -43,6 +43,9 @@
 			"blurb": ["tell us about yourself"]
 		}
 	},
+	"join": {
+		"model": "ctuser"
+	},
 	"access": {
 		"*": true,
 		"/edit": "admin",
