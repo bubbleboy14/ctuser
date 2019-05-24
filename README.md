@@ -21,7 +21,7 @@ This package includes a model, a request handler, and frontend components, inclu
     }
     cfg = {
     	"activation": { # activation rules per user type
-    		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
+    		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
     	}
     }
     util = """
@@ -80,6 +80,9 @@ This package includes a model, a request handler, and frontend components, inclu
     			"lastName": ["last name"],
     			"blurb": ["tell us about yourself"]
     		}
+    	},
+    	"join": {
+    		"model": "ctuser"
     	},
     	"access": {
     		"*": true,
