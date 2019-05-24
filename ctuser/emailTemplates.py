@@ -14,6 +14,12 @@ Please click <a href='""" + config.web.protocol + """://""" + config.web.domain 
 
 That's it!"""
 
+VERIFY = """Your account is almost ready!
+
+Click <a href='""" + config.web.protocol + """://""" + config.web.domain + """/user/activate.html#%s'>here</a> to activate it!
+
+See you soon!"""
+
 ACTIVATE = """Your account is now active.
 
 Click <a href='""" + config.web.protocol + """://""" + config.web.domain + """/'>here</a> to log in.
