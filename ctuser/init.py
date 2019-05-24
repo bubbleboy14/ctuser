@@ -15,7 +15,7 @@ routes = {
 }
 cfg = {
 	"activation": { # activation rules per user type
-		"ctuser": "auto" # or "confirm" or [email_address] -- requires config.mailer
+		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
 	}
 }
 util = """

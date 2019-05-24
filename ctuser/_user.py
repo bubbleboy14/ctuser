@@ -1,14 +1,18 @@
-from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail
+from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail, send_sms, verify_recaptcha
 from cantools.util import batch
 from cantools.db import edit
 from cantools import config
 from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation
-from emailTemplates import JOIN, JOINED, ACTIVATE, CONTACT
+from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email"])
-    if action == "join":
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms"])
+    if action == "recaptcha":
+        verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
+    elif action == "sms":
+        send_sms(cgi_get("number"), "confirmation code", cgi_get("code"), cgi_get("carrier"))
+    elif action == "join":
         email = cgi_get("email")
         if CTUser.query(CTUser.email == email).get():
             fail("this email is already in use")
@@ -24,8 +28,9 @@ def response():
         else: # assumes config.mailer (otherwise, don't change activation "auto" default)
             usk = u.key.urlsafe()
             if rule == "confirm":
-                send_mail(to=u.email, subject="activation required",
-                    body=JOIN%(usk,))
+                send_mail(to=u.email, subject="activation required", body=JOIN%(usk,))
+            elif rule == "verify":
+                send_mail(to=u.email, subject="activation required", body=VERIFY%(usk,))
             else: # email admin to handle it
                 send_mail(to=rule, subject="activation required", body=JOINED%(email, usk))
         u.put()
