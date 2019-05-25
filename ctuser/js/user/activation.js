@@ -70,7 +70,7 @@ user.activation = {
 		location.hash = "";
 		if (!user.activation._u)
 			location = core.config.ctuser.redir || "/";
-		var rnode = CT.dom.div();
+		var rnode = CT.dom.div(null, "centered");
 		CT.recaptcha.build(core.config.ctuser.recaptcha, rnode);
 		CT.dom.setContent("ctmain", CT.dom.div([
 			CT.dom.div("are you a real person?", "biggest"),
