@@ -11,7 +11,7 @@ def response():
     if action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "sms":
-        send_sms(cgi_get("number"), "confirmation code", cgi_get("code"), cgi_get("carrier"))
+        send_sms(cgi_get("number"), "confirmation code", str(cgi_get("code")), cgi_get("carrier"))
     elif action == "join":
         email = cgi_get("email")
         if CTUser.query(CTUser.email == email).get():
