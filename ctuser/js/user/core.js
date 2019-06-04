@@ -176,10 +176,10 @@ user.core = {
 			return CT.dom.link(fname, null, "/user/profile.html#" + u.key);
 		return fname;
 	},
-	all: function(cb, category, filters) {
+	all: function(cb, category, filters, prepper) {
 		CT.db.get(category || core.config.ctuser.results.model, function(users) {
 			CT.data.addSet(users);
-			cb(users.map(user.core.prep));
+			cb(users.map(prepper || user.core.prep));
 		}, null, null, null, filters);
 	},
 	get: function(attr) {
@@ -295,7 +295,8 @@ user.core = {
 					parent: "ctmain",
 					mode: "profile"
 				});
-			}, cfg.model, cfg.filters);
+				cfg.after && cfg.after();
+			}, cfg.model, cfg.filters, cfg.prepper);
 		}
 	},
 	buildConvo: function(convo) {
