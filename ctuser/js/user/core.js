@@ -230,8 +230,13 @@ user.core = {
 					CT.dom.pad(),
 					CT.dom.link("join", function() { opts.join(); })
 				];
-				if (!bare && opts.extras["*"])
-					lolz = [opts.extras["*"], lolz];
+				if (!bare && (opts.extras["*"] || opts.extras.nope)) {
+					lolz = [lolz];
+					if (opts.extras.nope)
+						lolz.unshift(opts.extras.nope);
+					if (opts.extras["*"])
+						lolz.unshift(opts.extras["*"]);
+				}
 				CT.dom.setContent(user.core._.login_links, lolz);
 			}
 		};
