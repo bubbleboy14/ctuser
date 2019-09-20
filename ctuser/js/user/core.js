@@ -160,6 +160,11 @@ user.core = {
 		}));
 	},
 	prep: function(u) {
+		if (!u.name) {
+			u.name = u.firstName;
+			if (u.lastName)
+				u.name += " " + u.lastName;
+		}
 		if (user.core._.current && user.core._.current.key == u.key)
 			return u;
 		u.img = u.img || core.config.ctuser.defaults.img;
@@ -304,7 +309,7 @@ user.core = {
 			}, cfg.model, cfg.filters, cfg.prepper);
 		}
 	},
-	buildConvo: function(convo) {
+	buildConvo: function(convo, topical) {
 		var n = CT.dom.node(), newMsg = function(m) {
 				return [
 					user.core.fullName(CT.data.get(m.sender), true),
@@ -321,7 +326,8 @@ user.core = {
 								action: "contact",
 								user: user.core._.current.key,
 								conversation: convo.key,
-								message: val
+								message: val,
+								update_participants: topical
 							}, "comment failed!", function(mkey) {
 								var d = {
 									key: mkey,
@@ -338,7 +344,8 @@ user.core = {
 						}
 					});
 				CT.dom.setContent(n, [
-					CT.dom.div(convo.topic, "big bold pv10"),
+					CT.dom.div(topical ? "Conversation" : convo.topic,
+						"big bold pv10"),
 					mnode,
 					inode
 				]);
@@ -355,6 +362,16 @@ user.core = {
 		}
 		return n;
 	},
+	convo: function(ckey) { // single / standalone
+		var n = CT.dom.div();
+		CT.db.one(ckey, function(convo) {
+			convo && CT.db.multi(convo.participants, function(pdata) {
+				pdata.forEach(user.core.prep);
+				CT.dom.setContent(n, user.core.buildConvo(convo, true));
+			});
+		});
+		return n;
+	},
 	messages: function() {
 		CT.db.get("conversation", function(convos) {
 			var participants = {};
@@ -368,9 +385,10 @@ user.core = {
 				var tl = CT.layout.listView({
 					data: convos,
 					listContent: function(convo) {
-						return user.core.fullName(CT.data.get(convo.participants.filter(function(p) {
+						var person = CT.data.get(convo.participants.filter(function(p) {
 							return p != user.core._.current.key;
-						})[0]));
+						})[0]);
+						return person ? user.core.fullName(person) : convo.topic;
 					},
 					hashcheck: function() {
 						if (location.hash) {
