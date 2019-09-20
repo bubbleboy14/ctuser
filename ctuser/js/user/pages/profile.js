@@ -13,7 +13,7 @@ CT.onload(function() {
 		var omit = core.config.ctuser.profile.omit,
 			base = ["firstName", "lastName", "email"];
 		CT.db.withSchema(function(fullSchema) {
-			var u = user.core.get(), extras = [], inputs = [],
+			var u = user.core.get(), extras = [],
 				schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = model[u.modelName] || model["*"],
@@ -35,11 +35,6 @@ CT.onload(function() {
 						if (u[f] != v)
 							changes[f] = v;
 					}
-					inputs.forEach(function(i) {
-						v = i.getValue();
-						if (u[f] != v)
-							changes[f] = v;
-					});
 					var pwv = CT.dom.getFieldValue("pw"),
 						pw2v = CT.dom.getFieldValue("pw2");
 					if (pwv || pw2v) {
@@ -74,8 +69,6 @@ CT.onload(function() {
 					continue;
 				var ptype = schema[p],
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
-				if (ptype != "blob")
-					inputs.push(i);
 				extras.push(i);
 			}
 			CT.dom.addContent("ctmain", CT.dom.node([
