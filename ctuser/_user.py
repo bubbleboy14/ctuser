@@ -64,6 +64,11 @@ def response():
             conversation.put()
         m = Message(sender=sender.key, conversation=conversation.key, body=message)
         m.put()
+        if cgi_get("update_participants", required=False):
+            if sender.key not in conversation.participants:
+                # ugh, fix db array mutability....
+                conversation.participants = conversation.participants + [sender.key]
+                conversation.put()
         for recipient in conversation.participants:
             if recipient != sender.key:
                 send_mail(to=recipient.get().email,
