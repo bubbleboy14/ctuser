@@ -2,7 +2,8 @@ user.core = {
 	_: {
 		messages: {
 			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
-			login: "great, you're logged in"
+			login: "great, you're logged in",
+			forgot: "we've emailed you your new password (a random, temporary value). don't forget to change it!"
 		},
 		userType: function(opts) {
 			(new CT.modal.Prompt({
@@ -30,28 +31,47 @@ user.core = {
 		user.core._.onchange = cb;
 	},
 	login: function(cb, fail_cb) {
-		var tryIt = function() {
+		var _ = user.core._, tryIt = function() {
 			if (!CT.parse.validEmail(email.value))
 				return alert("please provide a valid email");
 			var params = {
 				action: "login",
 				email: email.value,
-				password: pw.value
+				password: pw.fieldValue()
 			};
 			CT.net.post("/_user", params, "login failed :'(", function(data) {
-				user.core._.login(data, cb);
+				_.login(data, cb);
 			}, fail_cb);
 			limodal.hide();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
 			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
-			limodal = new CT.modal.Modal({
-				transition: "slide",
-				content: [
-					CT.dom.node("Log In", "div", "biggest"),
-					email, pw,
-					CT.dom.button("Continue", tryIt)
-				]
-			});
+			content = [
+				CT.dom.node("Log In", "div", "biggest"),
+				email, pw,
+				CT.dom.button("Continue", tryIt)
+			], limodal;
+		if (core.config.ctuser.resetter) {
+			content.unshift(CT.dom.link("forgot password", function() {
+				if (!CT.parse.validEmail(email.value))
+					return alert("please provide a valid email");
+				if (confirm("are you sure you want to reset your password?") && confirm("really?")) {
+					CT.net.post({
+						path: "/_user",
+						params: {
+							action: "reset",
+							email: email.value
+						},
+						cb: function() {
+							alert(_.messages.forgot);
+						}
+					});
+				}
+			}, null, "abs t5 l5 small"));
+		}
+		limodal = new CT.modal.Modal({
+			transition: "slide",
+			content: content
+		});
 		limodal.show();
 	},
 	logout: function() {
