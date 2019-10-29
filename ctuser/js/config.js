@@ -36,8 +36,8 @@
 			"active", "admin", "password", "img"],
 		"blurs": {
 			"email": ["email"],
-			"password": ["password"],
-			"password2": ["password (again)"],
+			"password": ["new password"],
+			"password2": ["new password (again)"],
 			"firstName": ["first name"],
 			"lastName": ["last name"],
 			"blurb": ["tell us about yourself"]
