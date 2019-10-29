@@ -1,5 +1,15 @@
 from cantools import config
 
+RESET = """
+As requested, we've reset your password.
+
+New password: "%s".
+
+Don't forget to change it, and have a great day!
+
+That's it!
+"""
+
 JOIN = """Welcome!
 
 Please click <a href='""" + config.web.protocol + """://""" + config.web.domain + """/_user?action=activate&key=%s'>here</a> to activate your account.
