@@ -1,15 +1,23 @@
 from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail, send_sms, verify_recaptcha
-from cantools.util import batch
-from cantools.db import edit
+from cantools.util import batch, token
+from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation
-from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT
+from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms", "reset"])
     if action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
+    elif action == "reset":
+        u = CTUser.query(CTUser.email == cgi_get("email")).get()
+        if not u:
+            fail()
+        pw = token()
+        u.password = hashpass(pw, u.created)
+        u.put()
+        send_mail(to=u.email, subject="password reset", body=RESET%(pw,))
     elif action == "sms":
         send_sms(cgi_get("number"), "confirmation code", str(cgi_get("code")), cgi_get("carrier"))
     elif action == "join":
@@ -21,7 +29,7 @@ def response():
             firstName=cgi_get("firstName"), lastName=cgi_get("lastName"),
             **cgi_get("extras"))
         u.put() # to generate created timestamp
-        u.password = db.hashpass(cgi_get("password"), u.created)
+        u.password = hashpass(cgi_get("password"), u.created)
         rule = config.ctuser.activation.get(user_type, config.ctuser.activation.ctuser)
         if rule == "auto":
             u.active = True
@@ -48,7 +56,7 @@ def response():
     elif action == "login":
         u = CTUser.query(CTUser.email == cgi_get("email"),
             CTUser.active == True).get()
-        if not u or u.password != db.hashpass(cgi_get("password"), u.created):
+        if not u or u.password != hashpass(cgi_get("password"), u.created):
             fail()
         succeed(u.data())
     elif action == "contact":
