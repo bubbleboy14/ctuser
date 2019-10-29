@@ -74,8 +74,8 @@ This package includes a model, a request handler, and frontend components, inclu
     			"active", "admin", "password", "img"],
     		"blurs": {
     			"email": ["email"],
-    			"password": ["password"],
-    			"password2": ["password (again)"],
+    			"password": ["new password"],
+    			"password2": ["new password (again)"],
     			"firstName": ["first name"],
     			"lastName": ["last name"],
     			"blurb": ["tell us about yourself"]
@@ -91,5 +91,6 @@ This package includes a model, a request handler, and frontend components, inclu
     		"/user/results.html": "admin",
     		"/user/profile.html": "user"
     	},
+    	"resetter": true,
     	"autoEdit": true
     }
