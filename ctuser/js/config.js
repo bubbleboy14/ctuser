@@ -53,5 +53,6 @@
 		"/user/results.html": "admin",
 		"/user/profile.html": "user"
 	},
+	"resetter": true,
 	"autoEdit": true
 }
