@@ -43,8 +43,8 @@ user.core = {
 				_.login(data, cb);
 			}, fail_cb);
 			limodal.hide();
-		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
-			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
+		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
+			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
 			content = [
 				CT.dom.node("Log In", "div", "biggest"),
 				email, pw,
