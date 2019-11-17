@@ -82,7 +82,8 @@ def response():
                 send_mail(to=recipient.get().email,
                     subject="message from %s"%(sender.firstName,),
                     body=CONTACT%(sender.fullName(), message,
-                        sender.firstName, sender.key.urlsafe(), conversation.key.urlsafe()))
+                        sender.key.urlsafe(), sender.firstName,
+                        conversation.key.urlsafe()))
         succeed(convokey and m.key.urlsafe() or conversation.key.urlsafe())
     elif action == "edit":
         changes = cgi_get("changes")
