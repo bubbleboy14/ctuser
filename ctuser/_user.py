@@ -62,6 +62,7 @@ def response():
     elif action == "contact":
         sender = db.get(cgi_get("user"))
         message = cgi_get("message")
+        handle = cgi_get("handle", required=False)
         convokey = cgi_get("conversation", required=False)
         if convokey:
             conversation = db.get(convokey)
@@ -71,6 +72,8 @@ def response():
             conversation.participants = [sender.key, db.KeyWrapper(cgi_get("recipient"))]
             conversation.put()
         m = Message(sender=sender.key, conversation=conversation.key, body=message)
+        if handle:
+            m.handle = handle
         m.put()
         if cgi_get("update_participants", required=False):
             if sender.key not in conversation.participants:
