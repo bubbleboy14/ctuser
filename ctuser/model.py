@@ -7,6 +7,7 @@ class CTUser(db.TimeStampedBase):
     password = db.String() # hashed
     firstName = db.String()
     lastName = db.String()
+    handles = db.String(repeated=True)
     blurb = db.Text()
     img = db.Binary()
     label = "firstName"
@@ -23,8 +24,10 @@ class CTUser(db.TimeStampedBase):
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
     topic = db.String()
+    anonymous = db.Boolean()
 
 class Message(db.TimeStampedBase):
     conversation = db.ForeignKey(kind=Conversation)
     sender = db.ForeignKey(kind=CTUser)
+    handle = db.String() # optional
     body = db.Text()
