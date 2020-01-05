@@ -21,7 +21,7 @@ def response():
     elif action == "sms":
         send_sms(cgi_get("number"), "confirmation code", str(cgi_get("code")), cgi_get("carrier"))
     elif action == "join":
-        email = cgi_get("email")
+        email = cgi_get("email").lower()
         if CTUser.query(CTUser.email == email).get():
             fail("this email is already in use")
         user_type = cgi_get("utype")
@@ -54,7 +54,7 @@ def response():
             body=ACTIVATE)
         redirect("/", "you did it!")
     elif action == "login":
-        u = CTUser.query(CTUser.email == cgi_get("email"),
+        u = CTUser.query(CTUser.email == cgi_get("email").lower(),
             CTUser.active == True).get()
         if not u or u.password != hashpass(cgi_get("password"), u.created):
             fail()
