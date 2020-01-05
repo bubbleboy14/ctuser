@@ -329,10 +329,42 @@ user.core = {
 			}, cfg.model, cfg.filters, cfg.prepper);
 		}
 	},
+	handle: function(convo, cb) {
+		if (!convo.anonymous)
+			return cb();
+		var u = user.core.get();
+		CT.modal.choice({
+			prompt: "please select your handle",
+			data: ["new handle"].concat(u.handles),
+			cb: function(handle) {
+				if (handle == "new handle") {
+					CT.modal.prompt({
+						prompt: "cool, what's the new handle?",
+						cb: function(handle) {
+							u.handles.push(handle);
+							var changes = { handles: u.handles };
+							user.core.update(changes);
+							CT.net.post({
+								path: "/_user",
+								action: "edit",
+								params: {
+									user: u.key,
+									changes: changes
+								}
+							});
+							cb(handle);
+						}
+					});
+				} else
+					cb(handle);
+			}
+		});
+	},
 	buildConvo: function(convo, topical) {
 		var n = CT.dom.node(), newMsg = function(m) {
 				return [
-					user.core.fullName(CT.data.get(m.sender), true),
+					m.handle ? CT.dom.span(m.handle, "big bold")
+						: user.core.fullName(CT.data.get(m.sender), true),
 					CT.dom.pad(),
 					CT.dom.span(m.body)
 				];
@@ -342,24 +374,28 @@ user.core = {
 						classname: "w19-20",
 						blurs: core.config.ctuser.messages.blurs.message,
 						cb: function(val) {
-							val && CT.net.post("/_user", {
-								action: "contact",
-								user: user.core._.current.key,
-								conversation: convo.key,
-								message: val,
-								update_participants: topical
-							}, "comment failed!", function(mkey) {
-								var d = {
-									key: mkey,
-									sender: user.core._.current.key,
+							val && user.core.handle(convo, function(handle) {
+								CT.net.post("/_user", {
+									action: "contact",
+									user: user.core._.current.key,
 									conversation: convo.key,
-									body: val
-								};
-								CT.data.add(d);
-								convo.messages.push(d);
-								CT.dom.addContent(mnode, newMsg(d));
-								inode.value = "";
-								inode.blur();
+									message: val,
+									handle: handle,
+									update_participants: topical
+								}, "comment failed!", function(mkey) {
+									var d = {
+										key: mkey,
+										sender: user.core._.current.key,
+										conversation: convo.key,
+										body: val,
+										handle: handle
+									};
+									CT.data.add(d);
+									convo.messages.push(d);
+									CT.dom.addContent(mnode, newMsg(d));
+									inode.value = "";
+									inode.blur();
+								});
 							});
 						}
 					});
