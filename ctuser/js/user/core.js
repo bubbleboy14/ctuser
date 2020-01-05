@@ -363,7 +363,7 @@ user.core = {
 	buildConvo: function(convo, topical) {
 		var n = CT.dom.node(), newMsg = function(m) {
 				return [
-					m.handle ? CT.dom.span(m.handle, "big bold")
+					m.handle ? CT.dom.span(m.handle, "bold anoname")
 						: user.core.fullName(CT.data.get(m.sender), true),
 					CT.dom.pad(),
 					CT.dom.span(m.body)
