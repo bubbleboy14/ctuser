@@ -13,6 +13,9 @@ class CTUser(db.TimeStampedBase):
     label = "firstName"
     _data_omit = ["password"]
 
+    def _trans_email(self, val):
+        return val.lower()
+
     def _trans_password(self, val):
         if not self.key:
             self.put()
