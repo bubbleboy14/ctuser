@@ -24,7 +24,7 @@ class CTUser(db.TimeStampedBase):
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
     topic = db.String()
-    anonymous = db.Boolean()
+    anonymous = db.Boolean(default=False)
 
 class Message(db.TimeStampedBase):
     conversation = db.ForeignKey(kind=Conversation)
