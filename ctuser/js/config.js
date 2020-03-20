@@ -54,5 +54,8 @@
 		"/user/profile.html": "user"
 	},
 	"resetter": true,
-	"autoEdit": true
+	"autoEdit": true,
+	"email": {
+		"any_recips": false
+	}
 }
