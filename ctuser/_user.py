@@ -105,12 +105,12 @@ def response():
                 recips = getWPmails()
             else:
                 fail("no recipients specified -- can't email nobody")
-        if len(recips) < 800:
-            log("fewer than 800 recips - doing batches of 100")
+        if len(recips) < 400:
+            log("fewer than 400 recips - doing batches of 100")
             batch(recips, lambda chunk : send_mail(bcc=chunk,
                 subject=sub, body=bod), chunk=100)
         else: # requires mailer cron
-            log("more than 800 recips - enqueueing Email record")
+            log("more than 400 recips - enqueueing Email record")
             Email(subject=sub, body=bod, recipients=recips).put()
 
 respond(response)
