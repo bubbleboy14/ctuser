@@ -1,0 +1,4 @@
+cron:
+- description: mailer
+  url: /mailer
+  schedule: every 1 hours
