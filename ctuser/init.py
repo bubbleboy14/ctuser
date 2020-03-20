@@ -2,13 +2,13 @@ copies = {
 	".": ["emailTemplates.py"]
 }
 syms = {
-	".": ["_user.py"],
+	".": ["_user.py", "mailer.py"],
 	"html": ["user"],
 	"img": ["user"],
 	"js": ["user"]
 }
 model = {
-	"ctuser.model": ["CTUser", "Message", "Conversation"]
+	"ctuser.model": ["*"]
 }
 routes = {
 	"/_user": "_user.py"

@@ -524,23 +524,47 @@ user.core = {
 			isTA: true,
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
-		});
+		}), ecfg = core.config.ctuser.email,
+			any_recips = ecfg && ecfg.any_recips;
 		CT.dom.setContent("ctmain", CT.dom.div([
 			CT.dom.div("Send an Email!", "biggest padded centered"),
 			subject,
 			body,
 			CT.dom.button("send it!", function() {
-				CT.net.post({
-					spinner: true,
-					path: "/_user",
-					params: {
-						action: "email",
-						user: user.core._.current.key,
-						subject: CT.dom.getFieldValue(subject),
-						body: CT.dom.getFieldValue(body)
-					},
-					cb: function() {
-						alert("you did it!")
+				var params = {
+					action: "email",
+					user: user.core._.current.key,
+					subject: CT.dom.getFieldValue(subject),
+					body: CT.dom.getFieldValue(body)
+				}, send = function() {
+					CT.net.post({
+						spinner: true,
+						path: "/_user",
+						params: params,
+						cb: function() {
+							alert("you did it!")
+						}
+					});
+				};
+				if (!any_recips)
+					return send();
+				CT.modal.choice({
+					prompt: "who should receive this email?",
+					data: [
+						"default (probably all members)",
+						"a specific email list"
+					],
+					cb: function(resp) {
+						if (resp != "a specific email list")
+							return send();
+						CT.modal.prompt({
+							isTA: true,
+							prompt: "please enter a comma-separated list of email addresses",
+							cb: function(estring) {
+								params.recipients = estring.split(", ");
+								send();
+							}
+						});
 					}
 				});
 			})

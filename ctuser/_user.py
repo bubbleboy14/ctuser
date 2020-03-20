@@ -3,7 +3,7 @@ from cantools.util import batch, token
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
-from model import db, CTUser, Message, Conversation
+from model import db, CTUser, Message, Conversation, Email
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 def response():
@@ -96,6 +96,8 @@ def response():
         sender = db.get(cgi_get("user"))
         if not sender.admin:
             fail()
+        sub = cgi_get("subject")
+        bod = cgi_get("body")
         recips = cgi_get("recipients", default=[])
         if not recips:
             if config.wpmail:
@@ -103,7 +105,12 @@ def response():
                 recips = getWPmails()
             else:
                 fail("no recipients specified -- can't email nobody")
-        batch(recips, lambda chunk : send_mail(bcc=chunk,
-            subject=cgi_get("subject"), body=cgi_get("body")), chunk=100)
+        if len(recips) < 400:
+            log("fewer than 400 recips - doing batches of 100")
+            batch(recips, lambda chunk : send_mail(bcc=chunk,
+                subject=sub, body=bod), chunk=100)
+        else: # requires mailer cron
+            log("more than 400 recips - enqueueing Email record")
+            Email(subject=sub, body=bod, recipients=recips).put()
 
 respond(response)
