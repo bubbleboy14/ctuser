@@ -1,4 +1,6 @@
 from cantools import db
+from cantools.util import log
+from cantools.web import send_mail
 
 class CTUser(db.TimeStampedBase):
     active = db.Boolean(default=False)
@@ -34,3 +36,28 @@ class Message(db.TimeStampedBase):
     sender = db.ForeignKey(kind=CTUser)
     handle = db.String() # optional
     body = db.Text()
+
+class Email(db.TimeStampedBase):
+    subject = db.String()
+    body = db.Text()
+    progress = db.Integer(default=0)
+    complete = db.Boolean(default=False)
+    recipients = db.String(repeated=True)
+
+    def process(self):
+        log("processing email: %s"%(self.subject,), important=True)
+        recips = self.recipients[self.progress:self.progress+40]
+        lbatch = len(recips)
+        lrecips = len(self.recipients)
+        send_mail(bcc=recips, subject=self.subject, body=self.body)
+        self.progress += lbatch
+        log("sent to %s recipients (%s/%s)"%(lbatch,
+            self.progress, lrecips))
+        if self.progress == len(self.recipients):
+            log("mailing complete!")
+            self.complete = True
+        self.put()
+
+def processEmails():
+    email = Email.query(Email.complete == False).get()
+    email and email.process()
