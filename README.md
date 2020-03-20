@@ -8,13 +8,13 @@ This package includes a model, a request handler, and frontend components, inclu
     	".": ["emailTemplates.py"]
     }
     syms = {
-    	".": ["_user.py"],
+    	".": ["_user.py", "mailer.py"],
     	"html": ["user"],
     	"img": ["user"],
     	"js": ["user"]
     }
     model = {
-    	"ctuser.model": ["CTUser", "Message", "Conversation"]
+    	"ctuser.model": ["*"]
     }
     routes = {
     	"/_user": "_user.py"
@@ -92,5 +92,8 @@ This package includes a model, a request handler, and frontend components, inclu
     		"/user/profile.html": "user"
     	},
     	"resetter": true,
-    	"autoEdit": true
+    	"autoEdit": true,
+    	"email": {
+    		"any_recips": false
+    	}
     }
