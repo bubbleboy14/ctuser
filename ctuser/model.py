@@ -59,5 +59,5 @@ class Email(db.TimeStampedBase):
         self.put()
 
 def processEmails():
-    email = Email.query(Email.complete == False).get()
-    email and email.process()
+    emails = Email.query(Email.complete == False).all()
+    emails and sorted(emails, key=lambda e : len(e.recipients))[0].process()
