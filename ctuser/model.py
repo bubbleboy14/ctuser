@@ -41,6 +41,7 @@ class Email(db.TimeStampedBase):
     subject = db.String()
     body = db.Text()
     progress = db.Integer(default=0)
+    paused = db.Boolean(default=False)
     complete = db.Boolean(default=False)
     recipients = db.String(repeated=True)
 
@@ -59,5 +60,5 @@ class Email(db.TimeStampedBase):
         self.put()
 
 def processEmails():
-    emails = Email.query(Email.complete == False).all()
+    emails = Email.query(Email.complete == False, Email.paused == False).all()
     emails and sorted(emails, key=lambda e : len(e.recipients))[0].process()
