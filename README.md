@@ -4,9 +4,7 @@ This package includes a model, a request handler, and frontend components, inclu
 
 # Back (Init Config)
 
-    copies = {
-    	".": ["emailTemplates.py"]
-    }
+    templates = "emailTemplates.py"
     syms = {
     	".": ["_user.py", "mailer.py"],
     	"html": ["user"],
@@ -31,6 +29,7 @@ This package includes a model, a request handler, and frontend components, inclu
     	CT.require("user.core", true);
     """
     requires = ["ctedit"]
+    
 
 # Front (JS Config)
 
