@@ -1,6 +1,4 @@
-copies = {
-	".": ["emailTemplates.py"]
-}
+templates = "emailTemplates.py"
 syms = {
 	".": ["_user.py", "mailer.py"],
 	"html": ["user"],
