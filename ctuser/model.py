@@ -47,10 +47,12 @@ class Email(db.TimeStampedBase):
 
     def process(self):
         log("processing email: %s"%(self.subject,), important=True)
-        recips = self.recipients[self.progress:self.progress+25]
+        recips = self.recipients[self.progress:self.progress+5]
         lbatch = len(recips)
         lrecips = len(self.recipients)
-        send_mail(bcc=recips, subject=self.subject, body=self.body)
+#        send_mail(bcc=recips, subject=self.subject, body=self.body) # disabled bcc -- too many bounces!
+        for recip in recips:
+            send_mail(to=recip, subject=self.subject, body=self.body)
         self.progress += lbatch
         log("sent to %s recipients (%s/%s)"%(lbatch,
             self.progress, lrecips))
