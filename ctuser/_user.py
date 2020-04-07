@@ -93,7 +93,8 @@ def response():
         changes["key"] = cgi_get("user")
         edit(changes)
     elif action == "feedback":
-        send_mail(to=config.ctuser.feedback, subject="feedback", body=cgi_get("feedback"))
+        send_mail(to=config.ctuser.feedback, subject="feedback",
+            body="%s\n\nemail: %s"%(cgi_get("feedback"), cgi_get("email")))
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
