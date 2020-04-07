@@ -7,7 +7,7 @@ from model import db, CTUser, Message, Conversation, Email
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms", "reset"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms", "reset", "feedback"])
     if action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "reset":
@@ -92,6 +92,8 @@ def response():
         changes = cgi_get("changes")
         changes["key"] = cgi_get("user")
         edit(changes)
+    elif action == "feedback":
+        send_mail(to=config.ctuser.feedback, subject="feedback", body=cgi_get("feedback"))
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
