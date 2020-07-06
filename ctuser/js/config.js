@@ -29,6 +29,7 @@
 		}
 	},
 	"profile": {
+		"cc": false,
 		"naked_join": false,
 		"model": "ctuser",
 		"omit": ["_kinds", "_label", "label", "index", "key",
