@@ -2,6 +2,8 @@ CT.require("CT.all");
 CT.require("core");
 CT.require("user.core");
 CT.require("edit.core");
+var pcfg = core.config.ctuser.profile;
+pcfg.cc && CT.require("CT.cc", true);
 
 CT.onload(function() {
 	CT.initCore();
@@ -10,8 +12,8 @@ CT.onload(function() {
 			CT.dom.addContent("ctmain", CT.layout.profile(user.core.prep(data)));
 		});
 	} else { // edit profile
-		var omit = core.config.ctuser.profile.omit,
-			base = ["firstName", "lastName", "email"];
+		var omit = pcfg.omit, base = ["firstName", "lastName", "email"];
+		pcfg.cc && omit.push("cc");
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(), extras = [],
 				schema = fullSchema[u.modelName],
@@ -70,6 +72,11 @@ CT.onload(function() {
 				var ptype = schema[p],
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
 				extras.push(i);
+			}
+			if (pcfg.cc) {
+				var ccnode = CT.dom.div();
+				extras.push(ccnode);
+				new CT.cc.Switcher({ node: ccnode });
 			}
 			CT.dom.addContent("ctmain", CT.dom.node([
 				greeting, base.map(function(p) {
