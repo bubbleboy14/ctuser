@@ -66,6 +66,7 @@ This package includes a model, a request handler, and frontend components, inclu
     		}
     	},
     	"profile": {
+    		"cc": false,
     		"naked_join": false,
     		"model": "ctuser",
     		"omit": ["_kinds", "_label", "label", "index", "key",
