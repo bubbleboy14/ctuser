@@ -1,6 +1,6 @@
 user.core = {
 	_: {
-		messages: {
+		messages: core.config.ctuser.alerts || {
 			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
 			login: "great, you're logged in",
 			forgot: "we've emailed you your new password (a random, temporary value). don't forget to change it!"

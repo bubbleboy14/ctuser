@@ -58,5 +58,10 @@
 	"autoEdit": true,
 	"email": {
 		"any_recips": false
+	},
+	"alerts": {
+		"join": "great! now just check your inbox for a welcome email, click the activation link, and log in.",
+		"login": "great, you're logged in",
+		"forgot": "we've emailed you your new password (a random, temporary value). don't forget to change it!"
 	}
 }
