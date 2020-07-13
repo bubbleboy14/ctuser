@@ -40,6 +40,7 @@ This package includes a model, a request handler, and frontend components, inclu
     		"user": [],
     		"admin": []
     	},
+    	"hovers": {},
     	"defaults": {
     		"img": "/img/user/default.png",
     		"blurb": "No blurb yet!"
