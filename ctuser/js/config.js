@@ -3,6 +3,7 @@
 		"user": [],
 		"admin": []
 	},
+	"hovers": {},
 	"defaults": {
 		"img": "/img/user/default.png",
 		"blurb": "No blurb yet!"
