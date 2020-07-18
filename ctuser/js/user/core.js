@@ -276,7 +276,7 @@ user.core = {
 							content: ucfg.hovers[a.innerHTML]
 						});
 					}
-				}, 500); // give body a moment to load
+				}, 2000); // give body a moment to load
 			}
 		};
 		ll.update();
