@@ -42,14 +42,14 @@ user.core = {
 			CT.net.post("/_user", params, "login failed :'(", function(data) {
 				_.login(data, cb);
 			}, fail_cb);
-			limodal.hide();
+			_.limodal.hide();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
 			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
 			content = [
 				CT.dom.node("Log In", "div", "biggest"),
 				email, pw,
 				CT.dom.button("Continue", tryIt)
-			], limodal;
+			];
 		if (core.config.ctuser.resetter) {
 			content.unshift(CT.dom.link("forgot password", function() {
 				if (!CT.parse.validEmail(email.value))
@@ -68,11 +68,13 @@ user.core = {
 				}
 			}, null, "abs t5 l5 small"));
 		}
-		limodal = new CT.modal.Modal({
-			transition: "slide",
-			content: content
-		});
-		limodal.show();
+		if (!_.limodal) {
+			_.limodal = new CT.modal.Modal({
+				transition: "slide",
+				content: content
+			});
+		}
+		_.limodal.show();
 	},
 	logout: function() {
 		var _ = user.core._;
