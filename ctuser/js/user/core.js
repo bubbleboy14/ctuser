@@ -144,7 +144,7 @@ user.core = {
 			firstName = CT.dom.smartField(tryIt, null, null, null, null, ["first name"]),
 			lastName = CT.dom.smartField(tryIt, null, null, null, null, ["last name"]),
 			content = [
-				CT.dom.div("Join - " + (opts.utype || (jcfg && jcfg.model) || "user"), "biggest"),
+				CT.dom.div(jcfg && jcfg.msg || ("Join - " + (opts.utype || (jcfg && jcfg.model) || "user")), "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
 			];
 		if (core.config.ctuser.profile.naked_join) {
