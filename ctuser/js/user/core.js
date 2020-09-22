@@ -5,6 +5,11 @@ user.core = {
 			login: "great, you're logged in",
 			forgot: "we've emailed you your new password (a random, temporary value). don't forget to change it!"
 		},
+		linkNames: core.config.ctuser.loggers || {
+			login: "login",
+			logout: "logout",
+			join: "join"
+		},
 		userType: function(opts) {
 			(new CT.modal.Prompt({
 				noClose: true,
@@ -245,18 +250,18 @@ user.core = {
 					if (opts.extras["*"])
 						lz.push(opts.extras["*"]);
 				}
-				lz.push(CT.dom.link("logout", function() {
+				lz.push(CT.dom.link(_.linkNames.logout, function() {
 					ucfg.logout_cb && ucfg.logout_cb();
 					opts.logout();
 				}, null, "right"));
 				CT.dom.setContent(ll, lz);
 			} else {
 				var lolz = ll._lolz = ll._lolz || [
-					CT.dom.link("login", function() {
+					CT.dom.link(_.linkNames.login, function() {
 						opts.login(ucfg.login_cb, ucfg.login_eb);
 					}),
 					CT.dom.pad(),
-					CT.dom.link("join", function() { opts.join(); })
+					CT.dom.link(_.linkNames.join, function() { opts.join(); })
 				];
 				if (!bare && (opts.extras["*"] || opts.extras.nope)) {
 					lolz = [lolz];
