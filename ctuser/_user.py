@@ -103,7 +103,7 @@ def response():
         bod = cgi_get("body")
         recips = cgi_get("recipients", default=[])
         if not recips:
-            if config.wpmail:
+            if config.ctuser.wpmail:
                 log("no recipients specified -- WP mode enabled -- building recipient list...")
                 recips = getWPmails()
             else:
