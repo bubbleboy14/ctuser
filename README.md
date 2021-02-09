@@ -95,7 +95,8 @@ This package includes a model, a request handler, and frontend components, inclu
     	"resetter": true,
     	"autoEdit": true,
     	"email": {
-    		"any_recips": false
+    		"any_recips": false,
+    		"groups": []
     	},
     	"alerts": {
     		"join": "great! now just check your inbox for a welcome email, click the activation link, and log in.",
