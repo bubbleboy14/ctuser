@@ -101,19 +101,28 @@ def response():
             fail()
         sub = cgi_get("subject")
         bod = cgi_get("body")
-        recips = cgi_get("recipients", default=[])
-        if not recips:
-            if config.ctuser.wpmail:
-                log("no recipients specified -- WP mode enabled -- building recipient list...")
-                recips = getWPmails()
-            else:
-                fail("no recipients specified -- can't email nobody")
-        if len(recips) < 400:
+        group = cgi_get("group", required=False)
+        if group:
+            recips = [r.email for r in db.get(group).query().all()]
+            if not recips:
+                fail("no %s records!"%(group,))
+        else:
+            recips = cgi_get("recipients", default=[])
+            if not recips:
+                if config.ctuser.wpmail:
+                    log("no recipients specified -- WP mode enabled -- building recipient list...")
+                    recips = getWPmails()
+                else:
+                    fail("no recipients specified -- can't email nobody")
+        if len(recips) < 400 and not group:
             log("fewer than 400 recips - doing batches of 100")
             batch(recips, lambda chunk : send_mail(bcc=chunk,
                 subject=sub, body=bod), chunk=100)
-        else: # requires mailer cron
-            log("more than 400 recips - enqueueing Email record")
-            Email(subject=sub, body=bod, recipients=recips).put()
+        else: # requires mailer cron; supports footer
+            log("more than 400 recips (or group) - enqueueing Email record")
+            em = Email(subject=sub, body=bod, recipients=recips)
+            if group and group in Email.footers:
+                em.footer = group
+            em.put()
 
 respond(response)
