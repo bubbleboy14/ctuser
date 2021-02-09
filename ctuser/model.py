@@ -40,10 +40,16 @@ class Message(db.TimeStampedBase):
 class Email(db.TimeStampedBase):
     subject = db.String()
     body = db.Text()
+    footer = db.String()
     progress = db.Integer(default=0)
     paused = db.Boolean(default=False)
     complete = db.Boolean(default=False)
     recipients = db.String(repeated=True)
+
+    def procbod(self, email):
+        if self.footer:
+            return "%s\n\n%s"%(self.body, Email.footers[self.footer](email))
+        return self.body
 
     def process(self):
         log("processing email: %s"%(self.subject,), important=True)
@@ -52,7 +58,7 @@ class Email(db.TimeStampedBase):
         lrecips = len(self.recipients)
 #        send_mail(bcc=recips, subject=self.subject, body=self.body) # disabled bcc -- too many bounces!
         for recip in recips:
-            send_mail(to=recip, subject=self.subject, body=self.body)
+            send_mail(to=recip, subject=self.subject, body=self.procbod(recip))
         self.progress += lbatch
         log("sent to %s recipients (%s/%s)"%(lbatch,
             self.progress, lrecips))
@@ -60,6 +66,8 @@ class Email(db.TimeStampedBase):
             log("mailing complete!")
             self.complete = True
         self.put()
+
+Email.footers = {}
 
 def processEmails():
     emails = Email.query(Email.complete == False, Email.paused == False).all()
