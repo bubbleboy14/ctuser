@@ -546,7 +546,8 @@ user.core = {
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
 		}), ecfg = core.config.ctuser.email,
-			any_recips = ecfg && ecfg.any_recips;
+			any_recips = ecfg && ecfg.any_recips,
+			egroups = ecfg && ecfg.groups || [];
 		CT.dom.setContent("ctmain", CT.dom.div([
 			CT.dom.div("Send an Email!", "biggest padded centered"),
 			subject,
@@ -572,20 +573,25 @@ user.core = {
 				CT.modal.choice({
 					prompt: "who should receive this email?",
 					data: [
-						"default (probably all members)",
+						"default",
 						"a specific email list"
-					],
+					].concat(egroups),
 					cb: function(resp) {
-						if (resp != "a specific email list")
+						if (resp == "default")
 							return send();
-						CT.modal.prompt({
-							isTA: true,
-							prompt: "please enter a comma-separated list of email addresses",
-							cb: function(estring) {
-								params.recipients = estring.split(", ");
-								send();
-							}
-						});
+						else if (resp == "a specific email list") {
+							CT.modal.prompt({
+								isTA: true,
+								prompt: "please enter a comma-separated list of email addresses",
+								cb: function(estring) {
+									params.recipients = estring.split(", ");
+									send();
+								}
+							});
+						} else {
+							params.group = resp;
+							send();
+						}
 					}
 				});
 			})
