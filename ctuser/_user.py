@@ -103,7 +103,7 @@ def response():
         bod = cgi_get("body")
         group = cgi_get("group", required=False)
         if group:
-            recips = [r.email for r in db.get(group).query().all()]
+            recips = [r.email for r in db.get_model(group).query().all()]
             if not recips:
                 fail("no %s records!"%(group,))
         else:
