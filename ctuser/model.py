@@ -1,4 +1,5 @@
-from cantools import db
+from urllib import quote, unquote
+from cantools import db, config
 from cantools.util import log
 from cantools.web import send_mail
 
@@ -37,6 +38,18 @@ class Message(db.TimeStampedBase):
     handle = db.String() # optional
     body = db.Text()
 
+class Unsubscriber(db.TimeStampedBase):
+    email = db.String()
+
+def unsubscribe(email):
+    email = unquote(email)
+    log("unsubscribe: %s"%(email,))
+    if not Unsubscriber.query(Unsubscriber.email == email).get():
+        Unsubscriber(email=email).put()
+
+def pruneUnsubs(emails):
+    return [e for e in emails if not Unsubscriber.query(Unsubscriber.email == e).get()]
+
 class Email(db.TimeStampedBase):
     subject = db.String()
     body = db.Text()
@@ -67,7 +80,13 @@ class Email(db.TimeStampedBase):
             self.complete = True
         self.put()
 
-Email.footers = {}
+def defEmFoot(email):
+    return "<a href='https://%s/_user?action=unsubscribe&email=%s'>click here to unsubscribe</a>"%(config.web.domain,
+        quote(email),)
+
+Email.footers = {
+    "default": defEmFoot
+}
 
 def processEmails():
     emails = Email.query(Email.complete == False, Email.paused == False).all()
