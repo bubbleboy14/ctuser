@@ -16,7 +16,8 @@ cfg = {
 		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
 	},
 	"email": {
-		"unsub": True
+		"unsub": True,
+		"groups": {}
 	}
 }
 util = """
