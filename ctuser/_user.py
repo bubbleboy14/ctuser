@@ -3,11 +3,11 @@ from cantools.util import batch, token
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
-from model import db, CTUser, Message, Conversation, Email
+from model import db, CTUser, Message, Conversation, Email, unsubscribe, pruneUnsubs
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "recaptcha", "sms", "reset", "feedback"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "unsubscribe", "recaptcha", "sms", "reset", "feedback"])
     if action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "reset":
@@ -95,6 +95,8 @@ def response():
     elif action == "feedback":
         send_mail(to=config.ctuser.feedback, subject="feedback",
             body="%s\n\nemail: %s"%(cgi_get("feedback"), cgi_get("email")))
+    elif action == "unsubscribe":
+        unsubscribe(cgi_get("email"))
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
@@ -102,7 +104,9 @@ def response():
         sub = cgi_get("subject")
         bod = cgi_get("body")
         group = cgi_get("group", required=False)
-        if group:
+        if group == "admins":
+            recips = config.admin.contacts
+        elif group:
             recips = [r.email for r in db.get_model(group).query().all()]
             if not recips:
                 fail("no %s records!"%(group,))
@@ -114,15 +118,18 @@ def response():
                     recips = getWPmails()
                 else:
                     fail("no recipients specified -- can't email nobody")
-        if len(recips) < 400 and not group:
-            log("fewer than 400 recips - doing batches of 100")
-            batch(recips, lambda chunk : send_mail(bcc=chunk,
-                subject=sub, body=bod), chunk=100)
-        else: # requires mailer cron; supports footer
-            log("more than 400 recips (or group) - enqueueing Email record")
+        recips = pruneUnsubs(recips)
+        if group or config.ctuser.email.unsub or len(recips) > 400: # requires mailer cron; supports footer
+            log("group or footer or more than 400 recips - enqueueing Email record")
             em = Email(subject=sub, body=bod, recipients=recips)
             if group and group in Email.footers:
                 em.footer = group
+            elif config.ctuser.email.unsub:
+                em.footer = "default"
             em.put()
+        else:
+            log("fewer than 400 recips - doing batches of 100")
+            batch(recips, lambda chunk : send_mail(bcc=chunk,
+                subject=sub, body=bod), chunk=100)
 
 respond(response)
