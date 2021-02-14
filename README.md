@@ -20,6 +20,9 @@ This package includes a model, a request handler, and frontend components, inclu
     cfg = {
     	"activation": { # activation rules per user type
     		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
+    	},
+    	"email": {
+    		"unsub": True
     	}
     }
     util = """
