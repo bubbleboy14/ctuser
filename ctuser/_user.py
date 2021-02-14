@@ -6,6 +6,12 @@ from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation, Email, unsubscribe, pruneUnsubs
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
+ucfg = config.ctuser
+ecfg = ucfg.email
+
+for name, group in ecfg.groups.items():
+    ecfg.groups.update(name, group.split("|"))
+
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "unsubscribe", "recaptcha", "sms", "reset", "feedback"])
     if action == "recaptcha":
@@ -30,7 +36,7 @@ def response():
             **cgi_get("extras"))
         u.put() # to generate created timestamp
         u.password = hashpass(cgi_get("password"), u.created)
-        rule = config.ctuser.activation.get(user_type, config.ctuser.activation.ctuser)
+        rule = ucfg.activation.get(user_type, ucfg.activation.ctuser)
         if rule == "auto":
             u.active = True
         else: # assumes config.mailer (otherwise, don't change activation "auto" default)
@@ -93,7 +99,7 @@ def response():
         changes["key"] = cgi_get("user")
         edit(changes)
     elif action == "feedback":
-        send_mail(to=config.ctuser.feedback, subject="feedback",
+        send_mail(to=ucfg.feedback, subject="feedback",
             body="%s\n\nemail: %s"%(cgi_get("feedback"), cgi_get("email")))
     elif action == "unsubscribe":
         unsubscribe(cgi_get("email"))
@@ -107,24 +113,24 @@ def response():
         if group == "admins":
             recips = config.admin.contacts
         elif group:
-            recips = config.ctuser.email.groups[group] or [r.email for r in db.get_model(group).query().all()]
+            recips = ecfg.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:
                 fail("no %s records!"%(group,))
         else:
             recips = cgi_get("recipients", default=[])
             if not recips:
-                if config.ctuser.wpmail:
+                if ucfg.wpmail:
                     log("no recipients specified -- WP mode enabled -- building recipient list...")
                     recips = getWPmails()
                 else:
                     fail("no recipients specified -- can't email nobody")
         recips = pruneUnsubs(recips)
-        if group or config.ctuser.email.unsub or len(recips) > 400: # requires mailer cron; supports footer
+        if group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
             log("group or footer or more than 400 recips - enqueueing Email record")
             em = Email(subject=sub, body=bod, recipients=recips)
             if group and group in Email.footers:
                 em.footer = group
-            elif config.ctuser.email.unsub:
+            elif ecfg.unsub:
                 em.footer = "default"
             em.put()
         else:
