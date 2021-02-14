@@ -22,7 +22,8 @@ This package includes a model, a request handler, and frontend components, inclu
     		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
     	},
     	"email": {
-    		"unsub": True
+    		"unsub": True,
+    		"groups": {}
     	}
     }
     util = """
