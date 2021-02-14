@@ -107,7 +107,7 @@ def response():
         if group == "admins":
             recips = config.admin.contacts
         elif group:
-            recips = [r.email for r in db.get_model(group).query().all()]
+            recips = config.ctuser.email.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:
                 fail("no %s records!"%(group,))
         else:
