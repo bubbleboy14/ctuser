@@ -1,4 +1,7 @@
-from urllib import quote, unquote
+try:
+    from urllib.parse import quote, unquote # py3
+except:
+    from urllib import quote, unquote # py2.7
 from cantools import db, config
 from cantools.util import log
 from cantools.web import send_mail
