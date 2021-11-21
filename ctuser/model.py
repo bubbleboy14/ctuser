@@ -2,6 +2,7 @@ try:
     from urllib.parse import quote, unquote # py3
 except:
     from urllib import quote, unquote # py2.7
+from datetime import datetime
 from cantools import db, config
 from cantools.util import log
 from cantools.web import send_mail
@@ -61,6 +62,7 @@ class Email(db.TimeStampedBase):
     paused = db.Boolean(default=False)
     complete = db.Boolean(default=False)
     recipients = db.String(repeated=True)
+    schedule = db.DateTime()
 
     def procbod(self, email):
         if self.footer:
@@ -92,5 +94,15 @@ Email.footers = {
 }
 
 def processEmails():
+    now = datetime.now()
+    pauseds = Email.query(Email.complete == False,
+        Email.paused == True).all()
+    if pauseds:
+        log("found %s paused Email records"%(len(paused),))
+        for p in pauseds:
+            if p.schedule and p.schedule <= now:
+                log("unpausing: %s"%(p.subject,))
+                p.paused = False
+                p.put()
     emails = Email.query(Email.complete == False, Email.paused == False).all()
     emails and sorted(emails, key=lambda e : len(e.recipients))[0].process()
