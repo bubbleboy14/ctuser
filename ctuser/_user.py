@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail, send_sms, verify_recaptcha
 from cantools.util import batch, token
 from cantools.db import edit, hashpass
@@ -110,6 +111,7 @@ def response():
         sub = cgi_get("subject")
         bod = cgi_get("body")
         group = cgi_get("group", required=False)
+        delay = cgi_get("delay", required=False)
         if group == "admins":
             recips = config.admin.contacts
         elif group:
@@ -125,13 +127,16 @@ def response():
                 else:
                     fail("no recipients specified -- can't email nobody")
         recips = pruneUnsubs(recips)
-        if group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
+        if delay or group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
             log("group or footer or more than 400 recips - enqueueing Email record")
             em = Email(subject=sub, body=bod, recipients=recips)
             if group and group in Email.footers:
                 em.footer = group
             elif ecfg.unsub:
                 em.footer = "default"
+            if delay:
+                em.paused = True
+                em.schedule = datetime.now() + timedelta(0, delay)
             em.put()
         else:
             log("fewer than 400 recips - doing batches of 100")
