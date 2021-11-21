@@ -98,7 +98,7 @@ def processEmails():
     pauseds = Email.query(Email.complete == False,
         Email.paused == True).all()
     if pauseds:
-        log("found %s paused Email records"%(len(paused),))
+        log("found %s paused Email records"%(len(pauseds),))
         for p in pauseds:
             if p.schedule and p.schedule <= now:
                 log("unpausing: %s"%(p.subject,))
