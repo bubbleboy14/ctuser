@@ -558,7 +558,7 @@ user.core = {
 					user: user.core._.current.key,
 					subject: CT.dom.getFieldValue(subject),
 					body: CT.dom.getFieldValue(body)
-				}, send = function() {
+				}, _send = function() {
 					CT.net.post({
 						spinner: true,
 						path: "/_user",
@@ -567,6 +567,30 @@ user.core = {
 							alert("you did it!")
 						}
 					});
+				}, sched = function() {
+					var val, secs, ds = CT.dom.dateSelectors({
+						withtime: true
+					}), dmod = CT.modal.modal([
+						"ok, when?",
+						ds,
+						CT.dom.button("do it", function() {
+							val = ds.value();
+							if (!val) return;
+							params.delay = ~~((CT.parse.string2date(val) - Date.now()) / 1000);
+							dmod.hide();
+							_send();
+						})
+					]);
+				}, send = function() {
+					CT.modal.choice({
+						prompt: "when should we send this email?",
+						data: ["now", "later"],
+						cb: function(when) {
+							if (when == "now")
+								return _send();
+							sched();
+						}
+					})
 				};
 				if (!any_recips)
 					return send();
