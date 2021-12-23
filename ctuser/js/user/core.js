@@ -276,11 +276,11 @@ user.core = {
 				CT.require("CT.hover", true);
 				setTimeout(function() {
 					for (var a of CT.dom.tag("a", ll)) {
-						(a.innerHTML in ucfg.hovers) && CT.hover.set({
+						(a.innerText in ucfg.hovers) && CT.hover.set({
 							node: a,
 							auto: true,
 							stayopen: true,
-							content: ucfg.hovers[a.innerHTML]
+							content: ucfg.hovers[a.innerText]
 						});
 					}
 				}, 2000); // give body a moment to load
