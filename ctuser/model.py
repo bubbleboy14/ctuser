@@ -58,6 +58,7 @@ class Email(db.TimeStampedBase):
     subject = db.String()
     body = db.Text()
     footer = db.String()
+    header = db.String()
     progress = db.Integer(default=0)
     paused = db.Boolean(default=False)
     complete = db.Boolean(default=False)
@@ -65,9 +66,12 @@ class Email(db.TimeStampedBase):
     schedule = db.DateTime()
 
     def procbod(self, email):
+        bod = self.body
+        if self.header:
+            bod = "%s\n\n%s"%(Email.headers[self.header](), bod)
         if self.footer:
-            return "%s\n\n%s"%(self.body, Email.footers[self.footer](email))
-        return self.body
+            bod = "%s\n\n%s"%(bod, Email.footers[self.footer](email))
+        return bod
 
     def process(self):
         log("processing email: %s"%(self.subject,), important=True)
@@ -92,6 +96,7 @@ def defEmFoot(email):
 Email.footers = {
     "default": defEmFoot
 }
+Email.headers = {}
 
 def processEmails():
     now = datetime.now()
