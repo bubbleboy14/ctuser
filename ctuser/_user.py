@@ -130,6 +130,8 @@ def response():
         if delay or group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
             log("group or footer or more than 400 recips - enqueueing Email record")
             em = Email(subject=sub, body=bod, recipients=recips)
+            if group and group in Email.headers:
+                em.header = group
             if group and group in Email.footers:
                 em.footer = group
             elif ecfg.unsub:
