@@ -4,7 +4,7 @@ from cantools.util import batch, token
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
-from model import db, CTUser, Message, Conversation, Email, unsubscribe, pruneUnsubs
+from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, pruneUnsubs
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 ucfg = config.ctuser
@@ -14,7 +14,7 @@ for name, group in ecfg.groups.items():
     ecfg.groups.update(name, group.split("|"))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "unsubscribe", "recaptcha", "sms", "reset", "feedback"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback"])
     if action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "reset":
@@ -102,6 +102,8 @@ def response():
     elif action == "feedback":
         send_mail(to=ucfg.feedback, subject="feedback",
             body="%s\n\nemail: %s"%(cgi_get("feedback"), cgi_get("email")))
+    elif action == "subscribe":
+        subscribe(cgi_get("email"))
     elif action == "unsubscribe":
         unsubscribe(cgi_get("email"))
     elif action == "email":

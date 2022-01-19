@@ -42,8 +42,17 @@ class Message(db.TimeStampedBase):
     handle = db.String() # optional
     body = db.Text()
 
+class Subscriber(db.TimeStampedBase):
+    email = db.String()
+
 class Unsubscriber(db.TimeStampedBase):
     email = db.String()
+
+def subscribe(email):
+    email = unquote(email)
+    log("subscribe: %s"%(email,))
+    if not Subscriber.query(Subscriber.email == email).get():
+        Subscriber(email=email).put()
 
 def unsubscribe(email):
     email = unquote(email)
