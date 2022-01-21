@@ -1,12 +1,14 @@
+import os
 from datetime import datetime, timedelta
-from cantools.web import log, respond, succeed, fail, cgi_get, redirect, send_mail, send_sms, verify_recaptcha
-from cantools.util import batch, token
+from cantools.web import log, respond, succeed, fail, cgi_get, read_file, redirect, send_mail, send_sms, verify_recaptcha
+from cantools.util import batch, token, mkdir, write
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
 from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, pruneUnsubs
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
+wc = config.web
 ucfg = config.ctuser
 ecfg = ucfg.email
 
@@ -14,8 +16,19 @@ for name, group in ecfg.groups.items():
     ecfg.groups.update(name, group.split("|"))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback"])
-    if action == "recaptcha":
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
+    if action == "egal":
+        egp = os.path.join("img", "egal")
+        if not os.path.isdir(egp):
+            mkdir(egp)
+        ubase = "%s://%s/%s"%(wc.protocol, wc.domain, egp)
+        fname = cgi_get("data", required=False)
+        if fname:
+            fdata = read_file(fname)
+            write(fdata, os.path.join(egp, fname))
+            succeed("%s/%s"%(ubase, fname))
+        succeed(list(map(egp.listdir(), lambda n : "%s/%s"%(ubase, n))))
+    elif action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "reset":
         u = CTUser.query(CTUser.email == cgi_get("email")).get()
