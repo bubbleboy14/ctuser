@@ -541,7 +541,7 @@ user.core = {
 		var itag = '<img src="' + url + '" style="width: 100%;">';
 		return CT.dom.img({
 			src: url,
-			className: "h100p pointer",
+			className: "h100p pointerimp",
 			attrs: {
 				draggable: true,
 				onclick: () => tinyMCE.activeEditor.selection.setContent(itag),
