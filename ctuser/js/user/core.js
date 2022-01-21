@@ -542,6 +542,7 @@ user.core = {
 			classname: "w1",
 			blurs: ["subject", "title"]
 		}), body = CT.dom.smartField({
+			wyz: true,
 			isTA: true,
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
@@ -557,7 +558,7 @@ user.core = {
 					action: "email",
 					user: user.core._.current.key,
 					subject: CT.dom.getFieldValue(subject),
-					body: CT.dom.getFieldValue(body)
+					body: body.fieldValue()
 				}, _send = function() {
 					CT.net.post({
 						spinner: true,
