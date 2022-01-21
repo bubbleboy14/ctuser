@@ -538,12 +538,20 @@ user.core = {
 		});
 	},
 	egalimg: function(url) {
-		var img = CT.dom.img(url, "h100p"), itag = '<img src="' + url + '" style="width: 100%;">';
-		img.draggable = true;
-		img.onclick = img.ondragend = function() {
-			tinyMCE.activeEditor.selection.setContent(itag);
-		};
-		return img;
+		var itag = '<img src="' + url + '" style="width: 100%;">';
+		return CT.dom.img({
+			src: url,
+			className: "h100p pointer",
+			attrs: {
+				draggable: true,
+				onclick: () => tinyMCE.activeEditor.selection.setContent(itag),
+				ondragstart: function(ev) {
+					ev.dataTransfer.dropEffect = "copy";
+					ev.dataTransfer.setData("text/plain", itag);
+					console.log("dragging", itag);
+				}
+			}
+		});
 	},
 	email: function() {
 		var subject = CT.dom.smartField({
