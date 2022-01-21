@@ -27,7 +27,7 @@ def response():
             fdata = read_file(fname)
             write(fdata, os.path.join(egp, fname))
             succeed("%s/%s"%(ubase, fname))
-        succeed(list(map(egp.listdir(), lambda n : "%s/%s"%(ubase, n))))
+        succeed(list(map(lambda n : "%s/%s"%(ubase, n), os.listdir(egp))))
     elif action == "recaptcha":
         verify_recaptcha(cgi_get("cresponse"), config.recaptcha)
     elif action == "reset":
