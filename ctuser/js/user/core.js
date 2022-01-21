@@ -540,13 +540,9 @@ user.core = {
 	egalimg: function(url) {
 		var img = CT.dom.img(url, "h100p"), itag = '<img src="' + url + '" style="width: 100%;">';
 		img.draggable = true;
-		img.onclick = function() {
+		img.onclick = img.ondragend = function() {
 			tinyMCE.activeEditor.selection.setContent(itag);
 		};
-		img.ondragstart = function(ev) {
-			ev.dataTransfer.dropEffect = "copy";
-			ev.dataTransfer.setData("text/plain", itag);
-		}
 		return img;
 	},
 	email: function() {
