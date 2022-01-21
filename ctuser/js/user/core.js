@@ -538,12 +538,14 @@ user.core = {
 		});
 	},
 	egalimg: function(url) {
-		var img = CT.dom.img(url, "h100p");
+		var img = CT.dom.img(url, "h100p"), itag = '<img src="' + url + '" style="width: 100%;">';
 		img.draggable = true;
+		img.onclick = function() {
+			tinyMCE.activeEditor.selection.setContent(itag);
+		};
 		img.ondragstart = function(ev) {
 			ev.dataTransfer.dropEffect = "copy";
-			ev.dataTransfer.setData("text/plain",
-				'<img src="' + url + '" style="width: 100%;">');
+			ev.dataTransfer.setData("text/plain", itag);
 		}
 		return img;
 	},
@@ -565,21 +567,22 @@ user.core = {
 				action: "egal"
 			},
 			cb: function(gals) {
+				var egalist = CT.dom.div(gals.map(egalimg));
 				CT.dom.setContent(egal, [
-					CT.dom.button("add", function() {
+					CT.dom.button("add image", function() {
 						CT.modal.prompt({
-							prompt: "please select the photo",
+							prompt: "please select the image",
 							style: "file",
 							cb: function(ctfile) {
 								ctfile.upload("/_user", function(iurl) {
-									CT.dom.addContent(egal, egalimg(iurl));
+									CT.dom.addContent(egalist, egalimg(iurl));
 								}, {
 									action: "egal"
 								});
 							}
 						});
 					}, "right"),
-					gals.map(egalimg)
+					egalist
 				]);
 			}
 		});
