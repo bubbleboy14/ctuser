@@ -537,27 +537,62 @@ user.core = {
 			}
 		});
 	},
+	egalimg: function(url) {
+		var img = CT.dom.img(url, "h100p"), itag = '<img src="' + url + '" style="width: 100%;">';
+		img.draggable = true;
+		img.onclick = img.ondragend = function() {
+			tinyMCE.activeEditor.selection.setContent(itag);
+		};
+		return img;
+	},
 	email: function() {
 		var subject = CT.dom.smartField({
 			classname: "w1",
 			blurs: ["subject", "title"]
 		}), body = CT.dom.smartField({
+			wyz: true,
 			isTA: true,
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
-		}), ecfg = core.config.ctuser.email,
+		}), egal = CT.dom.div(), ecfg = core.config.ctuser.email,
 			any_recips = ecfg && ecfg.any_recips,
-			egroups = ecfg && ecfg.groups || [];
+			egroups = ecfg && ecfg.groups || [], egalimg = user.core.egalimg;
+		CT.net.post({
+			path: "/_user",
+			params: {
+				action: "egal"
+			},
+			cb: function(gals) {
+				var egalist = CT.dom.div(gals.map(egalimg));
+				CT.dom.setContent(egal, [
+					CT.dom.button("add image", function() {
+						CT.modal.prompt({
+							prompt: "please select the image",
+							style: "file",
+							cb: function(ctfile) {
+								ctfile.upload("/_user", function(iurl) {
+									CT.dom.addContent(egalist, egalimg(iurl));
+								}, {
+									action: "egal"
+								});
+							}
+						});
+					}, "right"),
+					egalist
+				]);
+			}
+		});
 		CT.dom.setContent("ctmain", CT.dom.div([
 			CT.dom.div("Send an Email!", "biggest padded centered"),
 			subject,
 			body,
+			egal,
 			CT.dom.button("send it!", function() {
 				var params = {
 					action: "email",
 					user: user.core._.current.key,
 					subject: CT.dom.getFieldValue(subject),
-					body: CT.dom.getFieldValue(body)
+					body: body.fieldValue()
 				}, _send = function() {
 					CT.net.post({
 						spinner: true,
