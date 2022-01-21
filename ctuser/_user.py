@@ -21,7 +21,7 @@ def response():
         egp = os.path.join("img", "egal")
         if not os.path.isdir(egp):
             mkdir(egp)
-        ubase = "%s://%s/%s"%(wc.protocol, wc.domain, egp)
+        ubase = "%s://%s/%s"%(wc.protoreal or wc.protocol, wc.domain, egp)
         fname = cgi_get("data", required=False)
         if fname:
             fdata = read_file(fname)
