@@ -537,6 +537,16 @@ user.core = {
 			}
 		});
 	},
+	egalimg: function(url) {
+		var img = CT.dom.img(url, "h100p");
+		img.draggable = true;
+		img.ondragstart = function(ev) {
+			ev.dataTransfer.dropEffect = "copy";
+			ev.dataTransfer.setData("text/plain",
+				'<img src="' + url + '" style="width: 100%;">');
+		}
+		return img;
+	},
 	email: function() {
 		var subject = CT.dom.smartField({
 			classname: "w1",
@@ -546,13 +556,38 @@ user.core = {
 			isTA: true,
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
-		}), ecfg = core.config.ctuser.email,
+		}), egal = CT.dom.div(), ecfg = core.config.ctuser.email,
 			any_recips = ecfg && ecfg.any_recips,
-			egroups = ecfg && ecfg.groups || [];
+			egroups = ecfg && ecfg.groups || [], egalimg = user.core.egalimg;
+		CT.net.post({
+			path: "/_user",
+			params: {
+				action: "egal"
+			},
+			cb: function(gals) {
+				CT.dom.setContent(egal, [
+					CT.dom.button("add", function() {
+						CT.modal.prompt({
+							prompt: "please select the photo",
+							style: "file",
+							cb: function(ctfile) {
+								ctfile.upload("/_user", function(iurl) {
+									CT.dom.addContent(egal, egalimg(iurl));
+								}, {
+									action: "egal"
+								});
+							}
+						});
+					}, "right"),
+					gals.map(egalimg)
+				]);
+			}
+		});
 		CT.dom.setContent("ctmain", CT.dom.div([
 			CT.dom.div("Send an Email!", "biggest padded centered"),
 			subject,
 			body,
+			egal,
 			CT.dom.button("send it!", function() {
 				var params = {
 					action: "email",
