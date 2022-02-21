@@ -84,7 +84,7 @@ class Email(db.TimeStampedBase):
 
     def process(self):
         log("processing email: %s"%(self.subject,), important=True)
-        recips = self.recipients[self.progress:self.progress+5]
+        recips = self.recipients[self.progress:self.progress+int(config.ctuser.email.chunk)]
         lbatch = len(recips)
         lrecips = len(self.recipients)
 #        send_mail(bcc=recips, subject=self.subject, body=self.body) # disabled bcc -- too many bounces!

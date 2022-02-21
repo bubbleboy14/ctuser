@@ -17,7 +17,8 @@ cfg = {
 	},
 	"email": {
 		"unsub": True,
-		"groups": {}
+		"groups": {},
+		"chunk": 5
 	}
 }
 util = """
