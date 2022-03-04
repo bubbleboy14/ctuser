@@ -1,4 +1,4 @@
-import os
+import os, string
 from datetime import datetime, timedelta
 from cantools.web import log, respond, succeed, fail, cgi_get, read_file, redirect, send_mail, send_sms, verify_recaptcha
 from cantools.util import batch, token, mkdir, write
@@ -14,6 +14,15 @@ ecfg = ucfg.email
 
 for name, group in ecfg.groups.items():
     ecfg.groups.update(name, group.split("|"))
+
+def bulk_recips(ebase):
+    lowers = string.lowercase
+    recips = []
+    for i in lowers:
+        for j in lowers:
+            for k in lowers:
+                recips.append("%s%s%s"%(i, j, k))
+    return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
@@ -129,6 +138,8 @@ def response():
         delay = cgi_get("delay", required=False)
         if group == "admins":
             recips = config.admin.contacts
+        elif group == "bulk test": # max 17576 recips
+            recips = bulk_recips(ecfg.bulktarget or config.mailer.split("@")[0])
         elif group:
             recips = ecfg.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:

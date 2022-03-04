@@ -18,7 +18,8 @@ cfg = {
 	"email": {
 		"unsub": True,
 		"groups": {},
-		"chunk": 5
+		"chunk": 5,
+		"bulksize": 1000
 	}
 }
 util = """
