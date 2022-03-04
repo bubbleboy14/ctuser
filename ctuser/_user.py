@@ -129,6 +129,9 @@ def response():
         delay = cgi_get("delay", required=False)
         if group == "admins":
             recips = config.admin.contacts
+        elif group == "bulk test":
+            ebase = ecfg.bulktarget
+            recips = list(map(lambda x : "%s+test%s@gmail.com"%(ebase, x), list(range(1000))))
         elif group:
             recips = ecfg.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:
