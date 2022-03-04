@@ -138,8 +138,8 @@ def response():
         delay = cgi_get("delay", required=False)
         if group == "admins":
             recips = config.admin.contacts
-        elif group == "bulk test": # 702 recips
-            recips = bulk_recips(ecfg.bulktarget)
+        elif group == "bulk test": # max 17576 recips
+            recips = bulk_recips(ecfg.bulktarget or config.mailer)
         elif group:
             recips = ecfg.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:
