@@ -139,7 +139,7 @@ def response():
         if group == "admins":
             recips = config.admin.contacts
         elif group == "bulk test": # max 17576 recips
-            recips = bulk_recips(ecfg.bulktarget or config.mailer)
+            recips = bulk_recips(ecfg.bulktarget or config.mailer.split("@")[0])
         elif group:
             recips = ecfg.groups[group] or [r.email for r in db.get_model(group).query().all()]
             if not recips:
