@@ -17,11 +17,12 @@ for name, group in ecfg.groups.items():
 
 def bulk_recips(ebase):
     lowers = string.lowercase
-    recipses = [lowers]
-    for l in lowers:
-        recipses.append(map(lambda l2 : "%s%s"%(l, l2), lowers))
-    recips = [y for x in recipses for y in x]
-    return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips))
+    recips = []
+    for i in lowers:
+        for j in lowers:
+            for k in lowers:
+                recips.append("%s%s%s"%(i, j, k))
+    return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
     action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
