@@ -5,7 +5,7 @@ from cantools.util import batch, token, mkdir, write
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
-from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, pruneUnsubs
+from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, ununsubscribe, pruneUnsubs
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 wc = config.web
@@ -25,7 +25,7 @@ def bulk_recips(ebase):
     return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
     if action == "egal":
         egp = os.path.join("img", "egal")
         if not os.path.isdir(egp):
@@ -128,6 +128,8 @@ def response():
         subscribe(cgi_get("email"))
     elif action == "unsubscribe":
         unsubscribe(cgi_get("email"))
+    elif action == "ununsubscribe":
+        ununsubscribe(cgi_get("email"))
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
