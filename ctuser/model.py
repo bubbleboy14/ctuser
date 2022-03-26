@@ -60,6 +60,12 @@ def unsubscribe(email):
     if not Unsubscriber.query(Unsubscriber.email == email).get():
         Unsubscriber(email=email).put()
 
+def ununsubscribe(email):
+    email = unquote(email)
+    log("ununsubscribe: %s"%(email,))
+    u = Unsubscriber.query(Unsubscriber.email == email).get()
+    u and u.rm()
+
 def pruneUnsubs(emails):
     return [e for e in emails if not Unsubscriber.query(Unsubscriber.email == e).get()]
 
