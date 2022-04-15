@@ -100,6 +100,10 @@ class Email(db.TimeStampedBase):
         log("sent to %s recipients (%s/%s)"%(lbatch,
             self.progress, lrecips))
         if self.progress == len(self.recipients):
+            cc = config.ctuser.email.cc
+            if cc:
+                log("mailing cc: %s"%(cc,))
+                send_mail(to=cc, subject=self.subject, body=self.procbod(cc))
             log("mailing complete!")
             self.complete = True
         self.put()
