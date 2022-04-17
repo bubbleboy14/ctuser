@@ -5,12 +5,13 @@ except:
 from datetime import datetime
 from cantools import db, config
 from cantools.util import log
-from cantools.web import send_mail
+from cantools.web import send_mail, send_sms
 
 class CTUser(db.TimeStampedBase):
     active = db.Boolean(default=False)
     admin = db.Boolean(default=False)
     email = db.String()
+    sms = db.JSON() # {number,carrier}
     password = db.String() # hashed
     firstName = db.String()
     lastName = db.String()
@@ -30,6 +31,12 @@ class CTUser(db.TimeStampedBase):
 
     def fullName(self):
         return "%s %s"%(self.firstName, self.lastName)
+
+    def notify(self, subject, message):
+        if self.sms:
+            send_sms(self.sms["number"], subject, body, self.sms["carrier"])
+        else:
+            send_mail(self.email, subject=subject, body=body)
 
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
