@@ -1,6 +1,7 @@
 CT.require("CT.all");
 CT.require("core");
 CT.require("user.core");
+CT.require("user.activation");
 CT.require("edit.core");
 var pcfg = core.config.ctuser.profile;
 pcfg.cc && CT.require("CT.cc", true);
@@ -20,7 +21,15 @@ CT.onload(function() {
 				model = core.config.ctuser.model,
 				modopts = model[u.modelName] || model["*"],
 				blurs = core.config.ctuser.profile.blurs,
-				fields = {}, tryIt = function() {
+				fields = {}, subform = function(changes) {
+					CT.net.post("/_user", { action: "edit", user: u.key, changes: changes },
+						"edit failed! :'(", function() {
+							user.core.update(changes);
+							if ("firstName" in changes)
+								CT.dom.setContent(greeting, "Hello, " + u.firstName);
+							alert("great!");
+						});
+				}, tryIt = function() {
 					var f, v, changes = {};
 					for (f in fields) {
 						v = CT.dom.getFieldValue(f);
@@ -46,13 +55,7 @@ CT.onload(function() {
 							return alert("password must be at least 6 characters long");
 						changes.password = pwv;
 					}
-					CT.net.post("/_user", { action: "edit", user: u.key, changes: changes },
-						"edit failed! :'(", function() {
-							user.core.update(changes);
-							if ("firstName" in changes)
-								CT.dom.setContent(greeting, "Hello, " + u.firstName);
-							alert("great!");
-						});
+					subform(changes);
 				}, greeting = CT.dom.node("Hello, " + u.firstName, "div", "biggerest"),
 				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password", blurs: blurs.password }),
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
@@ -69,7 +72,10 @@ CT.onload(function() {
 				if ((p in fields) || (omit.indexOf(p) != -1) || (base.indexOf(p) != -1)
 					|| (modopts && modopts.checkboxes && (p in modopts.checkboxes)))
 					continue;
-				var ptype = schema[p],
+				var ptype = schema[p], i;
+				if (p == "sms")
+					i = user.activation.setter(u, subform);
+				else
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
 				extras.push(i);
 			}
