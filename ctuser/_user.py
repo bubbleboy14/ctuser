@@ -1,6 +1,6 @@
 import os, string
 from datetime import datetime, timedelta
-from cantools.web import log, respond, succeed, fail, cgi_get, read_file, redirect, send_mail, send_sms, verify_recaptcha
+from cantools.web import log, respond, succeed, fail, cgi_get, read_file, redirect, fetch, send_mail, send_sms, verify_recaptcha
 from cantools.util import batch, token, mkdir, write
 from cantools.db import edit, hashpass
 from cantools import config
