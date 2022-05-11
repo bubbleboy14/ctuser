@@ -591,6 +591,28 @@ user.core = {
 			}
 		});
 		CT.dom.setContent("ctmain", CT.dom.div([
+			CT.dom.button("view schedule", function() {
+				CT.net.post({
+					spinner: true,
+					path: "/_user",
+					params: {
+						action: "esched"
+					},
+					cb: function(schedz) {
+						CT.modal.modal([
+							CT.dom.div("scheduled emails", "big centered"),
+							schedz.map(function(e) {
+								return CT.dom.div([
+									CT.dom.div(e.group, "right"),
+									CT.dom.span(CT.parse.date2string(new Date(Date.now() + e.ttl * 1000), true)),
+									CT.dom.pad(),
+									CT.dom.span(e.subject, "bold")
+								], "bordered padded margined round");
+							})
+						]);
+					}
+				});
+			}, "right"),
 			CT.dom.div("Send an Email!", "biggest padded centered"),
 			subject,
 			body,
