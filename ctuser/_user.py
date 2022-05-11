@@ -25,7 +25,7 @@ def bulk_recips(ebase):
     return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal"])
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal", "esched"])
     if action == "egal":
         egp = os.path.join("img", "egal")
         if not os.path.isdir(egp):
@@ -130,6 +130,8 @@ def response():
         unsubscribe(cgi_get("email"))
     elif action == "ununsubscribe":
         ununsubscribe(cgi_get("email"))
+    elif action == "esched":
+        succeed([e.simple() for e in Email.query(Email.complete == False).all()])
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
