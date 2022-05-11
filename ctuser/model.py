@@ -87,6 +87,13 @@ class Email(db.TimeStampedBase):
     recipients = db.String(repeated=True)
     schedule = db.DateTime()
 
+    def simple(self):
+        return {
+            "subject": self.subject,
+            "group": self.footer,
+            "ttl": (self.schedule - datetime.now()).total_seconds()
+        }
+
     def procbod(self, email):
         bod = self.body
         if self.header:
