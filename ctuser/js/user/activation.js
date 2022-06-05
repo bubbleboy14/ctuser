@@ -93,7 +93,7 @@ user.activation = {
 			node.refresh();
 		};
 		node.refresh = function() {
-			CT.dom.setContent(node, u.sms ? [
+			CT.dom.setContent(node, (u.sms && u.sms.number) ? [
 				"using text notifications",
 				"number: " + u.sms.number,
 				"carrier: " + u.sms.carrier,
