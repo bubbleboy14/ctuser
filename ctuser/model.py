@@ -34,9 +34,9 @@ class CTUser(db.TimeStampedBase):
 
     def notify(self, subject, message):
         if self.sms:
-            send_sms(self.sms["number"], subject, body, self.sms["carrier"])
+            send_sms(self.sms["number"], subject, message, self.sms["carrier"])
         else:
-            send_mail(self.email, subject=subject, body=body)
+            send_mail(self.email, subject=subject, body=message)
 
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
