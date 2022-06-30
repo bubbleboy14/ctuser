@@ -91,6 +91,7 @@ class Email(db.TimeStampedBase):
         return {
             "subject": self.subject,
             "group": self.footer,
+            "complete": self.complete,
             "ttl": (self.schedule - datetime.now()).total_seconds()
         }
 
