@@ -615,7 +615,7 @@ user.core = {
 							schedz.map(user.core.escheditem),
 							"Sent",
 							sentz.map(user.core.escheditem)
-						]);
+						], null, { className: "basicpopup h9-10" });
 					}
 				});
 			}, "right"),
