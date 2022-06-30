@@ -553,6 +553,14 @@ user.core = {
 			}
 		});
 	},
+	escheditem: function(e) {
+		return CT.dom.div([
+			CT.dom.div(e.group, "right"),
+			CT.dom.span(CT.parse.date2string(new Date(Date.now() + e.ttl * 1000), true)),
+			CT.dom.pad(),
+			CT.dom.span(e.subject, "bold")
+		], "bordered padded margined round");
+	},
 	email: function() {
 		var subject = CT.dom.smartField({
 			classname: "w1",
@@ -598,17 +606,15 @@ user.core = {
 					params: {
 						action: "esched"
 					},
-					cb: function(schedz) {
+					cb: function(allez) {
+						var schedz = allez.filter(e => !e.complete),
+							sentz = allez.filter(e => e.complete);
 						CT.modal.modal([
 							CT.dom.div("scheduled emails", "big centered"),
-							schedz.map(function(e) {
-								return CT.dom.div([
-									CT.dom.div(e.group, "right"),
-									CT.dom.span(CT.parse.date2string(new Date(Date.now() + e.ttl * 1000), true)),
-									CT.dom.pad(),
-									CT.dom.span(e.subject, "bold")
-								], "bordered padded margined round");
-							})
+							"Scheduled",
+							schedz.map(user.core.escheditem),
+							"Sent",
+							sentz.map(user.core.escheditem)
 						]);
 					}
 				});
