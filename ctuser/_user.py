@@ -134,7 +134,7 @@ def response():
         if ecfg.scheduler:
             succeed(fetch("https://%s/_user?action=esched"%(ecfg.scheduler,), ctjson=True))
         else:
-            succeed([e.simple() for e in Email.query(Email.schedule != None).all()])
+            succeed([e.simple() for e in Email.query(Email.schedule != None).order(-Email.created).all()])
     elif action == "email":
         sender = db.get(cgi_get("user"))
         if not sender.admin:
