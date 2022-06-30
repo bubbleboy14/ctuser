@@ -34,7 +34,7 @@ def response():
         fname = cgi_get("data", required=False)
         if fname:
             fdata = read_file(fname)
-            write(fdata, os.path.join(egp, fname))
+            write(fdata, os.path.join(egp, fname), binary=True)
             succeed("%s/%s"%(ubase, fname))
         succeed(list(map(lambda n : "%s/%s"%(ubase, n), os.listdir(egp))))
     elif action == "recaptcha":
