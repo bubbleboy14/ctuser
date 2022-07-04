@@ -76,7 +76,8 @@ user.core = {
 		if (!_.limodal) {
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
-				content: content
+				content: content,
+				resizeRecenter: true
 			});
 		}
 		_.limodal.show();
@@ -160,7 +161,8 @@ user.core = {
 		content.push(CT.dom.button("Continue", tryIt));
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
-			content: content
+			content: content,
+			resizeRecenter: true
 		});
 		jmodal.show();
 	},
