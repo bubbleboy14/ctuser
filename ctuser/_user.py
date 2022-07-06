@@ -162,7 +162,14 @@ def response():
         recips = pruneUnsubs(recips)
         if delay or group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
             log("group or footer or more than 400 recips - enqueueing Email record")
-            em = Email(subject=sub, body=bod, recipients=recips)
+            ekey = cgi_get("key", required=False)
+            if ekey:
+                em = db.get(ekey)
+                em.subject = sub
+                em.body = bod
+                em.recipients = recips
+            else:
+                em = Email(subject=sub, body=bod, recipients=recips)
             if group and group in Email.headers:
                 em.header = group
             if group and group in Email.footers:
@@ -172,7 +179,12 @@ def response():
             if delay:
                 em.paused = True
                 em.schedule = datetime.now() + timedelta(0, delay)
+            if em.complete:
+                log("resending completed email (resetting complete flag and progress counter)")
+                em.complete = False
+                em.progress = 0
             em.put()
+            succeed(em.mindata())
         else:
             log("fewer than 400 recips - doing batches of 100")
             batch(recips, lambda chunk : send_mail(bcc=chunk,

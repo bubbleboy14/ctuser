@@ -87,6 +87,9 @@ class Email(db.TimeStampedBase):
     recipients = db.String(repeated=True)
     schedule = db.DateTime()
 
+    def labeler(self):
+        return "%s (%s)"%(self.subject, self.footer or "custom[%s]"%(len(self.recipients),))
+
     def simple(self):
         return {
             "subject": self.subject,
@@ -94,6 +97,15 @@ class Email(db.TimeStampedBase):
             "complete": self.complete,
             "ttl": (self.schedule - datetime.now()).total_seconds()
         }
+
+    def mindata(self):
+        d = self.data()
+        del d["recipients"]
+        if self.schedule:
+            d["ttl"] = (self.schedule - datetime.now()).total_seconds()
+            if config.ctuser.email.scheduler:
+                d["complete"] = d["tts"] < 0
+        return d
 
     def procbod(self, email):
         bod = self.body
