@@ -1,7 +1,7 @@
 user.mail = {
 	_: {
 		content: CT.dom.div(null, "ctcontent"),
-		list: CT.dom.div(null, "ctlist")
+		list: CT.dom.div(null, "ctlist scrolly")
 	},
 	img: function(url) {
 		var itag = '<img src="' + url + '" style="width: 100%;">';
