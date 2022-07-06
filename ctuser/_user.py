@@ -179,6 +179,10 @@ def response():
             if delay:
                 em.paused = True
                 em.schedule = datetime.now() + timedelta(0, delay)
+            if em.complete:
+                log("resending completed email (resetting complete flag and progress counter)")
+                em.complete = False
+                em.progress = 0
             em.put()
             succeed(em.mindata())
         else:
