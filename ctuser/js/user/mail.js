@@ -47,10 +47,10 @@ user.mail = {
 					], null, { className: "basicpopup h9-10" });
 				}
 			});
-		}, "right");
+		}, "right relative mosthigh");
 	},
 	gallery: function() {
-		var egal = CT.dom.div();
+		var egal = CT.dom.div(null, "abs bottomhalf");
 		CT.net.post({
 			path: "/_user",
 			params: {
@@ -93,7 +93,7 @@ user.mail = {
 			any_recips = ecfg && ecfg.any_recips,
 			egroups = ecfg && ecfg.groups || [];
 		CT.dom.setContent(_.content, CT.dom.div([
-			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "biggest padded centered"),
+			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "bigger padded centered"),
 			subject, body,
 			CT.dom.button("send it!", function() {
 				var params = {
@@ -175,7 +175,9 @@ user.mail = {
 			});
 			CT.dom.setMain([
 				user.mail.schedule(),
-				_.list, _.content,
+				CT.dom.div([
+					_.list, _.content
+				], "abs tophalf"),
 				user.mail.gallery()
 			]);
 			CT.panel.triggerList(mailz, user.mail.editor, _.list);
