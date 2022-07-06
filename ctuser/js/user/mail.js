@@ -112,7 +112,7 @@ user.mail = {
 						cb: function(d) {
 							CT.data.add(d);
 							if (mdata.key) {
-								mdata.assign(d);
+								Object.assign(mdata, d);
 								mdata.node.rename(d.label);
 								mdata.node.trigger(); // refreshes verbs etc
 							} else
