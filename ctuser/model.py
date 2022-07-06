@@ -103,6 +103,8 @@ class Email(db.TimeStampedBase):
         del d["recipients"]
         if self.schedule:
             d["ttl"] = (self.schedule - datetime.now()).total_seconds()
+            if config.ctuser.email.scheduler:
+                d["complete"] = d["tts"] < 0
         return d
 
     def procbod(self, email):
