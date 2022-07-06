@@ -19,10 +19,13 @@ user.mail = {
 			}
 		});
 	},
+	ttl: function(e) {
+		return CT.parse.date2string(new Date(Date.now() + e.ttl * 1000), true);
+	},
 	item: function(e) {
 		return CT.dom.div([
 			CT.dom.div(e.group, "right"),
-			CT.dom.span(CT.parse.date2string(new Date(Date.now() + e.ttl * 1000), true)),
+			CT.dom.span(user.mail.ttl(e)),
 			CT.dom.pad(),
 			CT.dom.span(e.subject, "bold")
 		], "bordered padded margined round");
@@ -91,11 +94,11 @@ user.mail = {
 			blurs: ["email body", "write your message here"]
 		}), ecfg = core.config.ctuser.email,
 			any_recips = ecfg && ecfg.any_recips,
-			egroups = ecfg && ecfg.groups || [];
-		CT.dom.setContent(_.content, CT.dom.div([
+			egroups = ecfg && ecfg.groups || [
+		], verb = mdata.key ? (mdata.complete ? "resend" : "change") : "send", cont = [
 			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "bigger padded centered"),
 			subject, body,
-			CT.dom.button("send it!", function() {
+			CT.dom.button(verb + " it!", function() {
 				var params = {
 					action: "email",
 					user: user.core._.current.key,
@@ -170,7 +173,16 @@ user.mail = {
 					}
 				});
 			})
-		], "padded"));
+		];
+		if (mdata.key) {
+			cont.push(CT.dom.pad());
+			cont.push(CT.dom.span(mdata.complete ? "completed" : ((mdata.paused && !mdata.ttl) ? "paused" : "sending")));
+			if (mdata.ttl) {
+				cont.push(CT.dom.pad());
+				cont.push(CT.dom.span("on " + user.mail.ttl(mdata)));
+			}
+		}
+		CT.dom.setContent(_.content, CT.dom.div(cont, "padded"));
 	},
 	init: function() {
 		var _ = user.mail._;
@@ -188,6 +200,6 @@ user.mail = {
 			]);
 			CT.panel.triggerList(mailz, user.mail.editor, _.list);
 			_.list.firstChild.trigger();
-		}, null, null, null, null, null, null, "mindata");
+		}, null, null, "-created", null, null, null, "mindata");
 	}
 };
