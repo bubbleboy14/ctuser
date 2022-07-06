@@ -106,8 +106,14 @@ user.mail = {
 						spinner: true,
 						path: "/_user",
 						params: params,
-						cb: function() {
-							alert("you did it!")
+						cb: function(d) {
+							CT.data.add(d);
+							if (mdata.key) {
+								mdata.assign(d);
+								mdata.node.rename(d.label);
+							} else
+								_.tlist.newAdd(d);
+							alert("you did it!");
 						}
 					});
 				}, sched = function() {
