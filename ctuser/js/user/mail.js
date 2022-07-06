@@ -1,4 +1,8 @@
 user.mail = {
+	_: {
+		content: CT.dom.div(null, "ctcontent"),
+		list: CT.dom.div(null, "ctlist")
+	},
 	img: function(url) {
 		var itag = '<img src="' + url + '" style="width: 100%;">';
 		return CT.dom.img({
@@ -23,25 +27,37 @@ user.mail = {
 			CT.dom.span(e.subject, "bold")
 		], "bordered padded margined round");
 	},
-	init: function() {
-		var subject = CT.dom.smartField({
-			classname: "w1",
-			blurs: ["subject", "title"]
-		}), body = CT.dom.smartField({
-			wyz: true,
-			isTA: true,
-			classname: "w1 mt5 hmin200p",
-			blurs: ["email body", "write your message here"]
-		}), egal = CT.dom.div(), ecfg = core.config.ctuser.email,
-			any_recips = ecfg && ecfg.any_recips,
-			egroups = ecfg && ecfg.groups || [], egalimg = user.mail.img;
+	schedule: function() {
+		return CT.dom.button("view schedule", function() {
+			CT.net.post({
+				spinner: true,
+				path: "/_user",
+				params: {
+					action: "esched"
+				},
+				cb: function(allez) {
+					var schedz = allez.filter(e => !e.complete),
+						sentz = allez.filter(e => e.complete);
+					CT.modal.modal([
+						CT.dom.div("scheduled emails", "big centered"),
+						"Scheduled",
+						schedz.map(user.mail.item),
+						"Sent",
+						sentz.map(user.mail.item)
+					], null, { className: "basicpopup h9-10" });
+				}
+			});
+		}, "right");
+	},
+	gallery: function() {
+		var egal = CT.dom.div();
 		CT.net.post({
 			path: "/_user",
 			params: {
 				action: "egal"
 			},
 			cb: function(gals) {
-				var egalist = CT.dom.div(gals.map(egalimg));
+				var egalist = CT.dom.div(gals.map(user.mail.img));
 				CT.dom.setContent(egal, [
 					CT.dom.button("add image", function() {
 						CT.modal.prompt({
@@ -49,7 +65,7 @@ user.mail = {
 							style: "file",
 							cb: function(ctfile) {
 								ctfile.upload("/_user", function(iurl) {
-									CT.dom.addContent(egalist, egalimg(iurl));
+									CT.dom.addContent(egalist, user.mail.img(iurl));
 								}, {
 									action: "egal"
 								});
@@ -60,31 +76,25 @@ user.mail = {
 				]);
 			}
 		});
-		CT.dom.setContent("ctmain", CT.dom.div([
-			CT.dom.button("view schedule", function() {
-				CT.net.post({
-					spinner: true,
-					path: "/_user",
-					params: {
-						action: "esched"
-					},
-					cb: function(allez) {
-						var schedz = allez.filter(e => !e.complete),
-							sentz = allez.filter(e => e.complete);
-						CT.modal.modal([
-							CT.dom.div("scheduled emails", "big centered"),
-							"Scheduled",
-							schedz.map(user.mail.item),
-							"Sent",
-							sentz.map(user.mail.item)
-						], null, { className: "basicpopup h9-10" });
-					}
-				});
-			}, "right"),
-			CT.dom.div("Send an Email!", "biggest padded centered"),
-			subject,
-			body,
-			egal,
+		return egal;
+	},
+	editor: function(mdata) {
+		var _ = user.mail._, subject = CT.dom.smartField({
+			classname: "w1",
+			value: mdata.subject,
+			blurs: ["subject", "title"]
+		}), body = CT.dom.smartField({
+			wyz: true,
+			isTA: true,
+			value: mdata.body,
+			classname: "w1 mt5 hmin200p",
+			blurs: ["email body", "write your message here"]
+		}), ecfg = core.config.ctuser.email,
+			any_recips = ecfg && ecfg.any_recips,
+			egroups = ecfg && ecfg.groups || [];
+		CT.dom.setContent(_.content, CT.dom.div([
+			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "biggest padded centered"),
+			subject, body,
 			CT.dom.button("send it!", function() {
 				var params = {
 					action: "email",
@@ -125,6 +135,8 @@ user.mail = {
 						}
 					})
 				};
+				if (mdata.key)
+					params.key = mdata.key;
 				if (!any_recips)
 					return send();
 				CT.modal.choice({
@@ -153,5 +165,21 @@ user.mail = {
 				});
 			})
 		], "padded"));
+	},
+	init: function() {
+		var _ = user.mail._;
+		CT.db.get("email", function(mailz) {
+			CT.data.addSet(mailz);
+			mailz.unshift({
+				label: "new email"
+			});
+			CT.dom.setMain([
+				user.mail.schedule(),
+				_.list, _.content,
+				user.mail.gallery()
+			]);
+			CT.panel.triggerList(mailz, user.mail.editor, _.list);
+			_.list.firstChild.trigger();
+		}, null, null, null, null, null, null, "mindata");
 	}
 };
