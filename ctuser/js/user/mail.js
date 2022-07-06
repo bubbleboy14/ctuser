@@ -116,7 +116,7 @@ user.mail = {
 								mdata.node.rename(d.label);
 								mdata.node.trigger(); // refreshes verbs etc
 							} else
-								_.tlist.newAdd(d);
+								_.list.newAdd(d);
 							alert("you did it!");
 						}
 					});
