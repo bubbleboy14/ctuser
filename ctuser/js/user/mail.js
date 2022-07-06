@@ -114,6 +114,7 @@ user.mail = {
 							if (mdata.key) {
 								mdata.assign(d);
 								mdata.node.rename(d.label);
+								mdata.node.trigger(); // refreshes verbs etc
 							} else
 								_.tlist.newAdd(d);
 							alert("you did it!");
