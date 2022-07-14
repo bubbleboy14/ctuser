@@ -10,10 +10,10 @@ def getWPQuery():
 	return q
 
 def getWPmails():
-    import MySQLdb
+    import pymysql
     h, u, p, d = read(".c").strip().split("|")
     log("extracting email list from WP", 1)
-    conn = MySQLdb.connect(host=h, user=u, passwd=p, db=d)
+    conn = pymysql.connect(host=h, user=u, passwd=p, db=d)
     cur = conn.cursor()
     cur.execute(getWPQuery())
     rowz = cur.fetchall()
