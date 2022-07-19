@@ -266,7 +266,7 @@ user.core = {
 					CT.dom.link(_.linkNames.join, function() { opts.join(); })
 				];
 				if (!bare && (opts.extras["*"] || opts.extras.nope)) {
-					lolz = [lolz];
+					lolz = [CT.dom.div(lolz, "right")];
 					if (opts.extras.nope)
 						lolz.unshift(opts.extras.nope);
 					if (opts.extras["*"])
