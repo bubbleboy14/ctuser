@@ -84,12 +84,15 @@ CT.onload(function() {
 				extras.push(ccnode);
 				new CT.cc.Switcher({ node: ccnode });
 			}
-			CT.dom.addContent("ctmain", CT.dom.node([
+			var connodes = [
 				greeting, base.map(function(p) {
 					fields[p] = CT.dom.smartField({ id: p, cb: tryIt, blurs: blurs[p], value: u[p] });
 					return fields[p];
 				}), [pw, pw2], img, fields.blurb, extras, CT.dom.button("Update", tryIt)
-			], "div", "padded"));
+			];
+			if (pcfg.custom)
+				connodes = connodes.concat(pcfg.custom());
+			CT.dom.addContent("ctmain", CT.dom.node(connodes, "div", "padded"));
 		});
 	}
 	edit.core.override();
