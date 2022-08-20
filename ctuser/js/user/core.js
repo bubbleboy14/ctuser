@@ -342,12 +342,12 @@ user.core = {
 			});
 		} else {
 			user.core.all(function(users) {
-				new CT.slider.Slider({
+				users.length ? new CT.slider.Slider({
 					frames: users,
 					arrow: cfg.arrow,
 					parent: "ctmain",
 					mode: "profile"
-				});
+				}) : CT.dom.setMain("nothing to see here!");
 				cfg.after && cfg.after();
 			}, cfg.model, cfg.filters, cfg.prepper);
 		}
