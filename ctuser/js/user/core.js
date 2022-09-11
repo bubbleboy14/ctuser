@@ -33,7 +33,7 @@ user.core = {
 		},
 		buildLI: function(cb, fail_cb) {
 			var _ = user.core._, ucfg = core.config.ctuser, lcfg = ucfg.login || {
-			}, bcfg = lcfg.blurs || {}, leg = lcfg.legacy, fclass = leg ? null : "w1", tryIt = function() {
+			}, bcfg = lcfg.blurs || {}, leg = lcfg.legacy, fclass = lcfg.fclass, tryIt = function() {
 				if (!CT.parse.validEmail(email.value))
 					return alert("please provide a valid email");
 				var params = {
@@ -52,7 +52,7 @@ user.core = {
 					email, pw
 				];
 			if (ucfg.resetter) {
-				content[leg ? "unshift" : "push"](CT.dom.link("forgot password", function() {
+				content[leg ? "unshift" : "push"](CT.dom.link("Forgot password?", function() {
 					if (!CT.parse.validEmail(email.value))
 						return alert("please provide a valid email");
 					if (confirm("are you sure you want to reset your password?") && confirm("really?")) {
@@ -67,7 +67,7 @@ user.core = {
 							}
 						});
 					}
-				}, null, leg ? "abs t5 l5 small" : "block small"));
+				}, null, leg ? "abs t5 l5 small" : "small block pv20"));
 			}
 			content.push(CT.dom.button(lcfg.butt || "Continue", tryIt));
 			if (lcfg.jlink) {
@@ -78,7 +78,7 @@ user.core = {
 						_.limodal.hide();
 						user.core.join();
 					})
-				], "smaller"));
+				], "smaller pt20"));
 			}
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
@@ -107,8 +107,8 @@ user.core = {
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
 			return user.core._.userType(opts || {});
-		var jcfg = core.config.ctuser.join || {},
-			umod = jcfg.model || "ctuser", leg = jcfg.legacy, fclass = leg ? null : "w1";
+		var jcfg = core.config.ctuser.join || {}, bcfg = jcfg.blurs || {},
+			umod = jcfg.model || "ctuser", fclass = jcfg.fclass;
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			fields: {},
 			selects: {}, // also: tos, utype
@@ -157,11 +157,11 @@ user.core = {
 				})).show();
 			} else
 				postIt();
-		}, email = CT.dom.smartField(tryIt, fclass, null, null, null, ["email"]),
-			pw = CT.dom.smartField(tryIt, fclass, null, null, "password", ["password"]),
-			pw2 = CT.dom.smartField(tryIt, fclass, null, null, "password", ["password (again)"]),
-			firstName = CT.dom.smartField(tryIt, fclass, null, null, null, ["first name"]),
-			lastName = CT.dom.smartField(tryIt, fclass, null, null, null, ["last name"]),
+		}, email = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.email || ["email"]),
+			pw = CT.dom.smartField(tryIt, fclass, null, null, "password", bcfg.password || ["password"]),
+			pw2 = CT.dom.smartField(tryIt, fclass, null, null, "password", bcfg.password2 || ["password (again)"]),
+			firstName = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.firstName || ["first name"]),
+			lastName = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.lastName || ["last name"]),
 			content = [
 				CT.dom.div(jcfg.msg || ("Join - " + (opts.utype || jcfg.model || "user")), jcfg.headclass || "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
@@ -180,7 +180,7 @@ user.core = {
 					jmodal.hide();
 					user.core.login();
 				})
-			], "smaller"));
+			], "smaller pt20"));
 		}
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
