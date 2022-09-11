@@ -171,7 +171,7 @@ user.core = {
 			lastName.classList.add("hidden");
 		}
 		user.core.fields(opts, content);
-		content.push(CT.dom.button("Continue", tryIt));
+		content.push(CT.dom.button(jcfg.butt || "Continue", tryIt));
 		if (jcfg.llink) {
 			content.push([
 				CT.dom.span(jcfg.lmsg),

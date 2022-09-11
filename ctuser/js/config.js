@@ -61,6 +61,7 @@
 		"llink": true,
 		"legacy": false,
 		"model": "ctuser",
+		"butt": "Create account",
 		"lmsg": "Already have an account?",
 		"llinkmsg": "Sign in"
 	},
