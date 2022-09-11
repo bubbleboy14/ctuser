@@ -48,6 +48,7 @@
 	"login": {
 		"jlink": true,
 		"legacy": false,
+		"fclass": "w1",
 		"msg": "Sign in",
 		"butt": "Sign in",
 		"jmsg": "No account?",
@@ -59,11 +60,18 @@
 	},
 	"join": {
 		"llink": true,
-		"legacy": false,
+		"fclass": "w1",
 		"model": "ctuser",
 		"butt": "Create account",
 		"lmsg": "Already have an account?",
-		"llinkmsg": "Sign in"
+		"llinkmsg": "Sign in",
+		"blurs": {
+			"email": ["Email"],
+			"password": ["Password"],
+			"password2": ["Password again"],
+			"firstName": ["First Name"],
+			"lastName": ["Last Name"]
+		}
 	},
 	"access": {
 		"*": true,
