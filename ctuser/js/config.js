@@ -45,6 +45,14 @@
 			"blurb": ["tell us about yourself"]
 		}
 	},
+	"login": {
+		"jlink": true,
+		"legacy": false,
+		"msg": "Sign in",
+		"butt": "Sign in",
+		"jmsg": "No account?",
+		"jlinkmsg": "Create an account"
+	},
 	"join": {
 		"model": "ctuser"
 	},
