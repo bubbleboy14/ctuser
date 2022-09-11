@@ -32,7 +32,8 @@ user.core = {
 			_.onchange && _.onchange();
 		},
 		buildLI: function(cb, fail_cb) {
-			var _ = user.core._, tryIt = function() {
+			var _ = user.core._, ucfg = core.config.ctuser, lcfg = ucfg.login || {
+			}, leg = lcfg.legacy, fclass = leg ? null : "w1", tryIt = function() {
 				if (!CT.parse.validEmail(email.value))
 					return alert("please provide a valid email");
 				var params = {
@@ -44,15 +45,14 @@ user.core = {
 					_.login(data, cb);
 				}, fail_cb);
 				_.limodal.hide();
-			}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
-				pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
-				ucfg = core.config.ctuser, content = [
-					CT.dom.node(ucfg.join && ucfg.join.login_msg || "Log In", "div", "biggest"),
-					email, pw,
-					CT.dom.button("Continue", tryIt)
+			}, email = CT.dom.smartField(tryIt, fclass, null, null, null, ["your email"]),
+				pw = CT.dom.smartField(tryIt, fclass, null, null, "password", ["your password"]),
+				content = [
+					CT.dom.node(lcfg.msg || "Log In", "div", "biggest"),
+					email, pw
 				];
 			if (ucfg.resetter) {
-				content.unshift(CT.dom.link("forgot password", function() {
+				content[leg ? "unshift" : "push"](CT.dom.link("forgot password", function() {
 					if (!CT.parse.validEmail(email.value))
 						return alert("please provide a valid email");
 					if (confirm("are you sure you want to reset your password?") && confirm("really?")) {
@@ -67,7 +67,18 @@ user.core = {
 							}
 						});
 					}
-				}, null, "abs t5 l5 small"));
+				}, null, leg ? "abs t5 l5 small" : "block"));
+			}
+			content.push(CT.dom.button(lcfg.butt || "Continue", tryIt));
+			if (lcfg.jlink) {
+				content.push([
+					CT.dom.span(lcfg.jmsg),
+					CT.dom.pad(),
+					CT.dom.link(lcfg.jlinkmsg, function() {
+						_.limodal.hide();
+						user.core.join();
+					})
+				]);
 			}
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
