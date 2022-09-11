@@ -48,7 +48,7 @@ user.core = {
 			}, email = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.email || ["your email"]),
 				pw = CT.dom.smartField(tryIt, fclass, null, null, "password", bcfg.password || ["your password"]),
 				content = [
-					CT.dom.node(lcfg.msg || "Log In", "div", "biggest"),
+					CT.dom.div(lcfg.msg || "Log In", lcfg.headclass || "biggest"),
 					email, pw
 				];
 			if (ucfg.resetter) {
@@ -67,18 +67,18 @@ user.core = {
 							}
 						});
 					}
-				}, null, leg ? "abs t5 l5 small" : "block"));
+				}, null, leg ? "abs t5 l5 small" : "block small"));
 			}
 			content.push(CT.dom.button(lcfg.butt || "Continue", tryIt));
 			if (lcfg.jlink) {
-				content.push([
+				content.push(CT.dom.div([
 					CT.dom.span(lcfg.jmsg),
 					CT.dom.pad(),
 					CT.dom.link(lcfg.jlinkmsg, function() {
 						_.limodal.hide();
 						user.core.join();
 					})
-				]);
+				], "smaller"));
 			}
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
@@ -163,7 +163,7 @@ user.core = {
 			firstName = CT.dom.smartField(tryIt, fclass, null, null, null, ["first name"]),
 			lastName = CT.dom.smartField(tryIt, fclass, null, null, null, ["last name"]),
 			content = [
-				CT.dom.div(jcfg.msg || ("Join - " + (opts.utype || jcfg.model || "user")), "biggest"),
+				CT.dom.div(jcfg.msg || ("Join - " + (opts.utype || jcfg.model || "user")), jcfg.headclass || "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
 			];
 		if (core.config.ctuser.profile.naked_join) {
@@ -173,14 +173,14 @@ user.core = {
 		user.core.fields(opts, content);
 		content.push(CT.dom.button(jcfg.butt || "Continue", tryIt));
 		if (jcfg.llink) {
-			content.push([
+			content.push(CT.dom.div([
 				CT.dom.span(jcfg.lmsg),
 				CT.dom.pad(),
 				CT.dom.link(jcfg.llinkmsg, function() {
 					jmodal.hide();
 					user.core.login();
 				})
-			]);
+			], "smaller"));
 		}
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
