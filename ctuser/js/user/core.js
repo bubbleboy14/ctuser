@@ -30,56 +30,58 @@ user.core = {
 			alert(_.messages.login);
 			cb && cb();
 			_.onchange && _.onchange();
-		}
-	},
-	onchange: function(cb) {
-		user.core._.onchange = cb;
-	},
-	login: function(cb, fail_cb) {
-		var _ = user.core._, tryIt = function() {
-			if (!CT.parse.validEmail(email.value))
-				return alert("please provide a valid email");
-			var params = {
-				action: "login",
-				email: email.value,
-				password: pw.fieldValue()
-			};
-			CT.net.post("/_user", params, "login failed :'(", function(data) {
-				_.login(data, cb);
-			}, fail_cb);
-			_.limodal.hide();
-		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
-			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
-			ucfg = core.config.ctuser, content = [
-				CT.dom.node(ucfg.join && ucfg.join.login_msg || "Log In", "div", "biggest"),
-				email, pw,
-				CT.dom.button("Continue", tryIt)
-			];
-		if (ucfg.resetter) {
-			content.unshift(CT.dom.link("forgot password", function() {
+		},
+		buildLI: function(cb, fail_cb) {
+			var _ = user.core._, tryIt = function() {
 				if (!CT.parse.validEmail(email.value))
 					return alert("please provide a valid email");
-				if (confirm("are you sure you want to reset your password?") && confirm("really?")) {
-					CT.net.post({
-						path: "/_user",
-						params: {
-							action: "reset",
-							email: email.value
-						},
-						cb: function() {
-							alert(_.messages.forgot);
-						}
-					});
-				}
-			}, null, "abs t5 l5 small"));
-		}
-		if (!_.limodal) {
+				var params = {
+					action: "login",
+					email: email.value,
+					password: pw.fieldValue()
+				};
+				CT.net.post("/_user", params, "login failed :'(", function(data) {
+					_.login(data, cb);
+				}, fail_cb);
+				_.limodal.hide();
+			}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
+				pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
+				ucfg = core.config.ctuser, content = [
+					CT.dom.node(ucfg.join && ucfg.join.login_msg || "Log In", "div", "biggest"),
+					email, pw,
+					CT.dom.button("Continue", tryIt)
+				];
+			if (ucfg.resetter) {
+				content.unshift(CT.dom.link("forgot password", function() {
+					if (!CT.parse.validEmail(email.value))
+						return alert("please provide a valid email");
+					if (confirm("are you sure you want to reset your password?") && confirm("really?")) {
+						CT.net.post({
+							path: "/_user",
+							params: {
+								action: "reset",
+								email: email.value
+							},
+							cb: function() {
+								alert(_.messages.forgot);
+							}
+						});
+					}
+				}, null, "abs t5 l5 small"));
+			}
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
 				content: content,
 				resizeRecenter: true
 			});
 		}
+	},
+	onchange: function(cb) {
+		user.core._.onchange = cb;
+	},
+	login: function(cb, fail_cb) {
+		var _ = user.core._;
+		_.limodal || _.buildLI(cb, fail_cb);
 		_.limodal.show();
 	},
 	logout: function() {
