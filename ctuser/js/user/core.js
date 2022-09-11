@@ -50,12 +50,12 @@ user.core = {
 			_.limodal.hide();
 		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["your email"]),
 			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["your password"]),
-			content = [
-				CT.dom.node("Log In", "div", "biggest"),
+			ucfg = core.config.ctuser, content = [
+				CT.dom.node(ucfg.join && ucfg.join.login_msg || "Log In", "div", "biggest"),
 				email, pw,
 				CT.dom.button("Continue", tryIt)
 			];
-		if (core.config.ctuser.resetter) {
+		if (ucfg.resetter) {
 			content.unshift(CT.dom.link("forgot password", function() {
 				if (!CT.parse.validEmail(email.value))
 					return alert("please provide a valid email");
