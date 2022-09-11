@@ -51,7 +51,11 @@
 		"msg": "Sign in",
 		"butt": "Sign in",
 		"jmsg": "No account?",
-		"jlinkmsg": "Create an account"
+		"jlinkmsg": "Create an account",
+		"blurs": {
+			"email": ["Email"],
+			"password": ["Password"]
+		}
 	},
 	"join": {
 		"model": "ctuser"

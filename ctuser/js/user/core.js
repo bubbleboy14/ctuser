@@ -33,7 +33,7 @@ user.core = {
 		},
 		buildLI: function(cb, fail_cb) {
 			var _ = user.core._, ucfg = core.config.ctuser, lcfg = ucfg.login || {
-			}, leg = lcfg.legacy, fclass = leg ? null : "w1", tryIt = function() {
+			}, bcfg = lcfg.blurs || {}, leg = lcfg.legacy, fclass = leg ? null : "w1", tryIt = function() {
 				if (!CT.parse.validEmail(email.value))
 					return alert("please provide a valid email");
 				var params = {
@@ -45,8 +45,8 @@ user.core = {
 					_.login(data, cb);
 				}, fail_cb);
 				_.limodal.hide();
-			}, email = CT.dom.smartField(tryIt, fclass, null, null, null, ["your email"]),
-				pw = CT.dom.smartField(tryIt, fclass, null, null, "password", ["your password"]),
+			}, email = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.email || ["your email"]),
+				pw = CT.dom.smartField(tryIt, fclass, null, null, "password", bcfg.password || ["your password"]),
 				content = [
 					CT.dom.node(lcfg.msg || "Log In", "div", "biggest"),
 					email, pw
