@@ -58,7 +58,11 @@
 		}
 	},
 	"join": {
-		"model": "ctuser"
+		"llink": true,
+		"legacy": false,
+		"model": "ctuser",
+		"lmsg": "Already have an account?",
+		"llinkmsg": "Sign in"
 	},
 	"access": {
 		"*": true,
