@@ -107,8 +107,8 @@ user.core = {
 			opts = CT.merge(opts, core.config.ctuser.model[opts.utype]);
 		else if (core.config.ctuser.model.choices)
 			return user.core._.userType(opts || {});
-		var jcfg = core.config.ctuser.join,
-			umod = jcfg && jcfg.model || "ctuser";
+		var jcfg = core.config.ctuser.join || {},
+			umod = jcfg.model || "ctuser", leg = jcfg.legacy, fclass = leg ? null : "w1";
 		opts = CT.merge(opts, core.config.ctuser.model["*"], {
 			fields: {},
 			selects: {}, // also: tos, utype
@@ -157,13 +157,13 @@ user.core = {
 				})).show();
 			} else
 				postIt();
-		}, email = CT.dom.smartField(tryIt, null, null, null, null, ["email"]),
-			pw = CT.dom.smartField(tryIt, null, null, null, "password", ["password"]),
-			pw2 = CT.dom.smartField(tryIt, null, null, null, "password", ["password (again)"]),
-			firstName = CT.dom.smartField(tryIt, null, null, null, null, ["first name"]),
-			lastName = CT.dom.smartField(tryIt, null, null, null, null, ["last name"]),
+		}, email = CT.dom.smartField(tryIt, fclass, null, null, null, ["email"]),
+			pw = CT.dom.smartField(tryIt, fclass, null, null, "password", ["password"]),
+			pw2 = CT.dom.smartField(tryIt, fclass, null, null, "password", ["password (again)"]),
+			firstName = CT.dom.smartField(tryIt, fclass, null, null, null, ["first name"]),
+			lastName = CT.dom.smartField(tryIt, fclass, null, null, null, ["last name"]),
 			content = [
-				CT.dom.div(jcfg && jcfg.msg || ("Join - " + (opts.utype || (jcfg && jcfg.model) || "user")), "biggest"),
+				CT.dom.div(jcfg.msg || ("Join - " + (opts.utype || jcfg.model || "user")), "biggest"),
 				email, [ firstName, lastName ], [ pw, pw2 ]
 			];
 		if (core.config.ctuser.profile.naked_join) {
@@ -172,6 +172,16 @@ user.core = {
 		}
 		user.core.fields(opts, content);
 		content.push(CT.dom.button("Continue", tryIt));
+		if (jcfg.llink) {
+			content.push([
+				CT.dom.span(jcfg.lmsg),
+				CT.dom.pad(),
+				CT.dom.link(jcfg.llinkmsg, function() {
+					jmodal.hide();
+					user.core.login();
+				})
+			]);
+		}
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
 			content: content,
