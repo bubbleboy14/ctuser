@@ -49,6 +49,7 @@
 		"jlink": true,
 		"legacy": false,
 		"fclass": "w1",
+		"mclass": "basicpopup login_modal",
 		"msg": "Sign in",
 		"butt": "Sign in",
 		"jmsg": "No account?",
@@ -61,6 +62,7 @@
 	"join": {
 		"llink": true,
 		"fclass": "w1",
+		"mclass": "basicpopup join_modal",
 		"model": "ctuser",
 		"butt": "Create account",
 		"lmsg": "Already have an account?",

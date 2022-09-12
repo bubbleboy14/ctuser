@@ -83,7 +83,8 @@ user.core = {
 			_.limodal = new CT.modal.Modal({
 				transition: "slide",
 				content: content,
-				resizeRecenter: true
+				resizeRecenter: true,
+				className: lcfg.mclass || "basicpopup"
 			});
 		}
 	},
@@ -185,7 +186,8 @@ user.core = {
 		jmodal = new CT.modal.Modal({
 			transition: "slide",
 			content: content,
-			resizeRecenter: true
+			resizeRecenter: true,
+			className: jcfg.mclass || "basicpopup"
 		});
 		jmodal.show();
 	},
