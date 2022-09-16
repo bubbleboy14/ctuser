@@ -11,16 +11,15 @@ user.core = {
 			join: "join"
 		},
 		userType: function(opts) {
-			(new CT.modal.Prompt({
+			CT.modal.prompt({
 				noClose: true,
-				transition: "slide",
 				style: "single-choice",
 				data: core.config.ctuser.model.choices,
 				cb: function(utype) {
 					opts.utype = utype;
 					user.core.join(opts);
 				}
-			})).show();
+			});
 		},
 		login: function(data, cb) {
 			var _ = user.core._;
@@ -80,12 +79,9 @@ user.core = {
 					})
 				], "smaller pt20"));
 			}
-			_.limodal = new CT.modal.Modal({
-				transition: "slide",
-				content: content,
-				resizeRecenter: true,
+			_.limodal = CT.modal.modal(content, null, {
 				className: lcfg.mclass || "basicpopup"
-			});
+			}, null, true);
 		}
 	},
 	onchange: function(cb) {
@@ -150,12 +146,11 @@ user.core = {
 			if (!core.config.ctuser.profile.naked_join && (!firstName.value || !lastName.value))
 				return alert("please provide a name");
 			if (opts.tos) {
-				(new CT.modal.Prompt({
-					transition: "slide",
+				CT.modal.prompt({
 					style: "confirm",
 					prompt: opts.tos,
 					cb: postIt
-				})).show();
+				});
 			} else
 				postIt();
 		}, email = CT.dom.smartField(tryIt, fclass, null, null, null, bcfg.email || ["email"]),
@@ -183,13 +178,9 @@ user.core = {
 				})
 			], "smaller pt20"));
 		}
-		jmodal = new CT.modal.Modal({
-			transition: "slide",
-			content: content,
-			resizeRecenter: true,
+		jmodal = CT.modal.modal(content, null, {
 			className: jcfg.mclass || "basicpopup"
 		});
-		jmodal.show();
 	},
 	fields: function(opts, content, withUser) {
 		var fiekeys = Object.keys(opts.fields),
