@@ -80,6 +80,7 @@ user.core = {
 				], "smaller pt20"));
 			}
 			_.limodal = CT.modal.modal(content, null, {
+				backdrop: lcfg.backdrop,
 				className: lcfg.mclass || "basicpopup"
 			}, null, true);
 		}
@@ -179,6 +180,7 @@ user.core = {
 			], "smaller pt20"));
 		}
 		jmodal = CT.modal.modal(content, null, {
+			backdrop: jcfg.backdrop,
 			className: jcfg.mclass || "basicpopup"
 		});
 	},
