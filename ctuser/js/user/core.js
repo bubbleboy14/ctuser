@@ -77,7 +77,7 @@ user.core = {
 						_.limodal.hide();
 						user.core.join();
 					})
-				], "smaller pt20"));
+				], lcfg.jclass || "smaller pt20"));
 			}
 			_.limodal = CT.modal.modal(content, null, {
 				backdrop: lcfg.backdrop,
@@ -177,7 +177,7 @@ user.core = {
 					jmodal.hide();
 					user.core.login();
 				})
-			], "smaller pt20"));
+			], jcfg.lclass || "smaller pt20"));
 		}
 		jmodal = CT.modal.modal(content, null, {
 			backdrop: jcfg.backdrop,
