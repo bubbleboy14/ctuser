@@ -255,24 +255,39 @@ user.core = {
 		user.core.get();
 		var ll = _.login_links = CT.dom.div(null, null, "ctll");
 		ll.update = function() { // wrap cbs to avoid MouseEvents
-			var u = _.current;
+			var u = _.current, ustuff = function(lz) {
+				lz = lz || [];
+				if (opts.extras.user)
+					lz.push(opts.extras.user);
+				if (u.admin && opts.extras.admin)
+					lz.push(opts.extras.admin);
+				if (opts.extras[u.modelName])
+					lz.push(opts.extras[u.modelName]);
+				return lz;
+			}, lout = function() {
+				ucfg.logout_cb && ucfg.logout_cb();
+				opts.logout();
+			};
 			if (u) {
 				var lz = [];
 				if (bare)
 					lz.push("hi, " + u.email);
 				else {
-					if (opts.extras.user)
-						lz.push(opts.extras.user);
-					if (u.admin && opts.extras.admin)
-						lz.push(opts.extras.admin);
-					if (opts.extras[u.modelName])
-						lz.push(opts.extras[u.modelName]);
+					ucfg.userMenu || ustuff(lz);
 					if (opts.extras["*"])
 						lz.push(opts.extras["*"]);
 				}
-				lz.push(CT.dom.link(_.linkNames.logout, function() {
-					ucfg.logout_cb && ucfg.logout_cb();
-					opts.logout();
+				lz.push(CT.dom.link(ucfg.userMenu ? ("hi, " + u.firstName) : _.linkNames.logout, function() {
+					if (!ucfg.userMenu)
+						return lout();
+					CT.modal.modal(ustuff().concat(CT.dom.link(_.linkNames.logout, lout)), null, {
+						className: ucfg.userMenu,
+						innerClass: "h1 w1",
+						center: false,
+						slide: {
+							origin: "topright"
+						}
+					}, true, true).show(CT.dom.id("ctmain"));
 				}, null, "right"));
 				CT.dom.setContent(ll, lz);
 			} else {
