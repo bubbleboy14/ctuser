@@ -280,14 +280,17 @@ user.core = {
 				lz.push(CT.dom.link(ucfg.userMenu ? ("hi, " + u.firstName) : _.linkNames.logout, function() {
 					if (!ucfg.userMenu)
 						return lout();
-					CT.modal.modal(ustuff().concat(CT.dom.link(_.linkNames.logout, lout)), null, {
-						className: ucfg.userMenu,
-						innerClass: "h1 w1",
-						center: false,
-						slide: {
-							origin: "topright"
-						}
-					}, true, true).show(CT.dom.id("ctmain"));
+					if (!_.userMenu) {
+						_.userMenu = CT.modal.modal(ustuff().concat(CT.dom.link(_.linkNames.logout, lout)), null, {
+							className: ucfg.userMenu,
+							innerClass: "h1 w1",
+							center: false,
+							slide: {
+								origin: "topright"
+							}
+						}, true, true);
+					}
+					_.userMenu.show(CT.dom.id("ctmain"));
 				}, null, "right"));
 				CT.dom.setContent(ll, lz);
 			} else {
