@@ -9,6 +9,7 @@ pcfg.cc && CT.require("CT.cc", true);
 CT.onload(function() {
 	CT.initCore();
 	if (location.hash) { // view profile
+		document.body.classList.add("ctuser-profile-view");
 		CT.db.one(location.hash.slice(1), function(data) {
 			CT.dom.addContent("ctmain", CT.layout.profile(user.core.prep(data)));
 		});
