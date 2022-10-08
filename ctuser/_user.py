@@ -5,7 +5,7 @@ from cantools.util import batch, token, mkdir, write
 from cantools.db import edit, hashpass
 from cantools import config
 from ctuser.util import getWPmails
-from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, ununsubscribe, pruneUnsubs
+from model import db, CTUser, Message, Conversation, Email, subscribe, unsubscribe, ununsubscribe, pruneUnsubs, getMem
 from emailTemplates import JOIN, JOINED, VERIFY, ACTIVATE, CONTACT, RESET
 
 wc = config.web
@@ -25,8 +25,10 @@ def bulk_recips(ebase):
     return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal", "esched"])
-    if action == "egal":
+    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal", "esched", "delmem"])
+    if action == "delmem": # self only!
+        getMem(cgi_get("e"), cgi_get("p"), lambda u : u.rm(), fail, key=cgi_get("k"))
+    elif action == "egal":
         egp = os.path.join("img", "egal")
         if not os.path.isdir(egp):
             mkdir(egp)
@@ -83,11 +85,7 @@ def response():
             body=ACTIVATE)
         redirect("/", "you did it!")
     elif action == "login":
-        u = CTUser.query(CTUser.email == cgi_get("email").lower(),
-            CTUser.active == True).get()
-        if not u or u.password != hashpass(cgi_get("password"), u.created):
-            fail()
-        succeed(u.data())
+        getMem(cgi_get("email"), cgi_get("password"), succeed, fail, True)
     elif action == "contact":
         sender = db.get(cgi_get("user"))
         message = cgi_get("message")
