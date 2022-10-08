@@ -89,8 +89,25 @@ CT.onload(function() {
 				greeting, base.map(function(p) {
 					fields[p] = CT.dom.smartField({ id: p, cb: tryIt, blurs: blurs[p], value: u[p] });
 					return fields[p];
-				}), [pw, pw2], img, fields.blurb, extras, CT.dom.button("Update", tryIt)
+				}), [pw, pw2], img, fields.blurb, extras
 			];
+			pcfg.delMem && connodes.push(CT.dom.button("delete account", function() {
+				confirm(pcfg.delMem) && CT.net.post({
+					spinner: true,
+					path: "/_user",
+					params: {
+						action: "delmem",
+						p: prompt("Please enter your password"),
+						e: u.email,
+						k: u.key
+					},
+					cb: function() {
+						alert("ok, you're deleted!");
+						user.core.logout();
+					}
+				});
+			}, "right red"));
+			connodes.push(CT.dom.button("Update", tryIt));
 			if (pcfg.custom)
 				connodes = connodes.concat(pcfg.custom());
 			CT.dom.addContent("ctmain", CT.dom.node(connodes, "div", "padded"));
