@@ -59,7 +59,7 @@ CT.onload(function() {
 				}, greeting = CT.dom.node("Hello, " + u.firstName, "div", "biggerest"),
 				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password", blurs: blurs.password }),
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
-				img = CT.db.edit.media({ data: u, cb: user.core.update });
+				img = CT.db.edit.media({ data: u, cb: user.core.update, className: pcfg.imgClass || "wm1-3 right up50" });
 			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true,
 				classname: "w1", blurs: blurs.blurb, value: u.blurb });
 			if (modopts) {
