@@ -38,6 +38,15 @@ class CTUser(db.TimeStampedBase):
         else:
             send_mail(self.email, subject=subject, body=message)
 
+def getMem(email, password, yes, no, datify=False, key=None):
+    u = CTUser.query(CTUser.email == email.lower(),
+        CTUser.active == True).get()
+    if not u or u.password != db.hashpass(password, u.created):
+        no()
+    if key and key != u.key.urlsafe():
+        no()
+    yes(datify and u.data() or u)
+
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
     topic = db.String()
