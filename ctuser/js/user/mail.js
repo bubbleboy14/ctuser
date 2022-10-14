@@ -53,7 +53,7 @@ user.mail = {
 		}, "right relative mosthigh");
 	},
 	gallery: function() {
-		var egal = CT.dom.div(null, "abs bottomhalf");
+		var egal = CT.dom.div(null, "abs b0 l0 r0 h1-3 scrolly");
 		CT.net.post({
 			path: "/_user",
 			params: {
@@ -196,7 +196,7 @@ user.mail = {
 				user.mail.schedule(),
 				CT.dom.div([
 					_.list, _.content
-				], "abs tophalf"),
+				], "abs t0 r0 l0 h2-3"),
 				user.mail.gallery()
 			]);
 			CT.panel.triggerList(mailz, user.mail.editor, _.list);
