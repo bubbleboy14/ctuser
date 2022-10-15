@@ -86,7 +86,9 @@ user.mail = {
 			classname: "w1",
 			value: mdata.subject,
 			blurs: ["subject", "title"]
-		}), body = CT.dom.smartField({
+		}), customlist = "a specific email list", basicgroups = [
+			"default", customlist
+		], body = CT.dom.smartField({
 			wyz: true,
 			isTA: true,
 			value: mdata.body,
@@ -104,11 +106,11 @@ user.mail = {
 					user: user.core._.current.key,
 					subject: CT.dom.getFieldValue(subject),
 					body: body.fieldValue()
-				}, _send = function() {
+				}, groups = [], _send = function(gparams) {
 					CT.net.post({
 						spinner: true,
 						path: "/_user",
-						params: params,
+						params: CT.merge(gparams, params),
 						cb: function(d) {
 							CT.data.add(d);
 							if (mdata.key) {
@@ -120,6 +122,8 @@ user.mail = {
 							alert("you did it!");
 						}
 					});
+				}, _sendall = function() {
+					groups.length ? groups.forEach(_send) : _send();
 				}, sched = function() {
 					var val, secs, ds = CT.dom.dateSelectors({
 						withtime: true
@@ -131,7 +135,7 @@ user.mail = {
 							if (!val) return;
 							params.delay = ~~((CT.parse.string2date(val) - Date.now()) / 1000);
 							dmod.hide();
-							_send();
+							_sendall();
 						})
 					]);
 				}, send = function() {
@@ -140,10 +144,24 @@ user.mail = {
 						data: ["now", "later"],
 						cb: function(when) {
 							if (when == "now")
-								return _send();
+								return _sendall();
 							sched();
 						}
-					})
+					});
+				}, procgroups = function(names) {
+					groups = names.map(function(n) {
+						return basicgroups.includes(n) ? {} : { group: n };
+					});
+					names.includes(customlist) ? CT.modal.prompt({
+						isTA: true,
+						prompt: "please enter a comma-separated list of email addresses",
+						cb: function(estring) {
+							groups[names.indexOf(customlist)] = {
+								recipients: estring.split(", ")
+							};
+							send();
+						}
+					}) : send();
 				};
 				if (mdata.key)
 					params.key = mdata.key;
@@ -151,27 +169,9 @@ user.mail = {
 					return send();
 				CT.modal.choice({
 					prompt: "who should receive this email?",
-					data: [
-						"default",
-						"a specific email list"
-					].concat(egroups),
-					cb: function(resp) {
-						if (resp == "default")
-							return send();
-						else if (resp == "a specific email list") {
-							CT.modal.prompt({
-								isTA: true,
-								prompt: "please enter a comma-separated list of email addresses",
-								cb: function(estring) {
-									params.recipients = estring.split(", ");
-									send();
-								}
-							});
-						} else {
-							params.group = resp;
-							send();
-						}
-					}
+					style: "multiple-choice",
+					data: basicgroups.concat(egroups),
+					cb: procgroups
 				});
 			})
 		];
