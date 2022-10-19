@@ -277,7 +277,7 @@ user.core = {
 					if (opts.extras["*"])
 						lz.push(opts.extras["*"]);
 				}
-				lz.push(CT.dom.link(ucfg.userMenu ? ("hi, " + u.firstName) : _.linkNames.logout, function() {
+				lz.push(CT.dom.link(ucfg.userMenu ? ("Hi, " + u.firstName) : _.linkNames.logout, function() {
 					if (!ucfg.userMenu)
 						return lout();
 					if (!_.userMenu) {
