@@ -21,7 +21,7 @@ CT.onload(function() {
 				schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = model[u.modelName] || model["*"],
-				blurs = core.config.ctuser.profile.blurs,
+				blurs = pcfg.blurs, clz = pcfg.classes || {},
 				fields = {}, subform = function(changes) {
 					CT.net.post("/_user", { action: "edit", user: u.key, changes: changes },
 						"edit failed! :'(", function() {
@@ -58,11 +58,14 @@ CT.onload(function() {
 					}
 					subform(changes);
 				}, greeting = CT.dom.node("Hello, " + u.firstName, "div", "biggerest"),
-				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password", blurs: blurs.password }),
-				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password", blurs: blurs.password2 }),
-				img = CT.db.edit.media({ data: u, cb: user.core.update, className: pcfg.imgClass || "wm1-3 right up50" });
+				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password",
+					blurs: blurs.password, classname: clz.pw }),
+				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password",
+					blurs: blurs.password2, classname: clz.pw2 }),
+				img = CT.db.edit.media({ data: u, cb: user.core.update,
+					className: clz.img || "wm1-3 right up50" });
 			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true,
-				classname: "w1", blurs: blurs.blurb, value: u.blurb });
+				classname: clz.blurb || "w1", blurs: blurs.blurb, value: u.blurb });
 			if (modopts) {
 				user.core.fields(modopts, extras, true);
 				if (modopts.selects)
@@ -86,11 +89,18 @@ CT.onload(function() {
 				new CT.cc.Switcher({ node: ccnode });
 			}
 			var connodes = [
-				greeting, base.map(function(p) {
-					fields[p] = CT.dom.smartField({ id: p, cb: tryIt, blurs: blurs[p], value: u[p] });
+				base.map(function(p) {
+					fields[p] = CT.dom.smartField({
+						id: p,
+						cb: tryIt,
+						value: u[p],
+						blurs: blurs[p],
+						classname: clz[p]
+					});
 					return fields[p];
 				}), [pw, pw2], img, fields.blurb, extras
 			];
+			pcfg.nohi || connodes.unshift(greeting);
 			pcfg.delMem && connodes.push(CT.dom.button("delete account", function() {
 				confirm(pcfg.delMem) && CT.net.post({
 					spinner: true,
