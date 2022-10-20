@@ -45,6 +45,9 @@
 			"blurb": ["tell us about yourself"]
 		},
 		"classes": {
+		},
+		"fopts": {
+
 		}
 	},
 	"login": {
