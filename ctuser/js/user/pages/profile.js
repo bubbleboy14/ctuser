@@ -21,7 +21,7 @@ CT.onload(function() {
 				schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = model[u.modelName] || model["*"],
-				blurs = pcfg.blurs, clz = pcfg.classes || {},
+				blurs = pcfg.blurs, clz = pcfg.classes || {}, fopts = pcfg.fopts || {},
 				fields = {}, subform = function(changes) {
 					CT.net.post("/_user", { action: "edit", user: u.key, changes: changes },
 						"edit failed! :'(", function() {
@@ -90,13 +90,13 @@ CT.onload(function() {
 			}
 			var connodes = [
 				base.map(function(p) {
-					fields[p] = CT.dom.smartField({
+					fields[p] = CT.dom.smartField(CT.merge({
 						id: p,
 						cb: tryIt,
 						value: u[p],
 						blurs: blurs[p],
 						classname: clz[p]
-					});
+					}, fopts[p]));
 					return fields[p];
 				}), [pw, pw2], img, fields.blurb, extras
 			];
@@ -116,8 +116,8 @@ CT.onload(function() {
 						user.core.logout();
 					}
 				});
-			}, "right red"));
-			connodes.push(CT.dom.button("Update", tryIt));
+			}, clz.delbutt || "right red"));
+			connodes.push(CT.dom.button("Update", tryIt, clz.upbutt));
 			if (pcfg.custom)
 				connodes = connodes.concat(pcfg.custom());
 			CT.dom.addContent("ctmain", CT.dom.node(connodes, "div", "padded"));
