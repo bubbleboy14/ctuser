@@ -43,6 +43,8 @@
 			"firstName": ["first name"],
 			"lastName": ["last name"],
 			"blurb": ["tell us about yourself"]
+		},
+		"classes": {
 		}
 	},
 	"login": {
