@@ -78,7 +78,7 @@ CT.onload(function() {
 					continue;
 				var ptype = schema[p], i;
 				if (p == "sms")
-					i = user.activation.setter(u, subform);
+					i = user.activation.setter(u, subform, pcfg.smsbutt, clz.sms);
 				else
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
 				extras.push(i);
