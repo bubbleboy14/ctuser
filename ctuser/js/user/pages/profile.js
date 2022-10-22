@@ -15,7 +15,7 @@ CT.onload(function() {
 		});
 	} else { // edit profile
 		var omit = pcfg.omit, base = ["firstName", "lastName", "email"];
-		pcfg.cc && omit.push("cc");
+		omit.includes("cc") || omit.push("cc"); // handled differently...
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(), extras = [],
 				schema = fullSchema[u.modelName],
