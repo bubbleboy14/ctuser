@@ -102,7 +102,7 @@ CT.onload(function() {
 			];
 			pcfg.blurbtitle && connodes.push(CT.dom.div(pcfg.blurbtitle, clz.blurbtitle))
 			connodes.push(fields.blurb);
-			connodes.push(fields.extras);
+			connodes.push(extras);
 			pcfg.nohi || connodes.unshift(greeting);
 			pcfg.delMem && connodes.push(CT.dom.button("delete account", function() {
 				confirm(pcfg.delMem) && CT.net.post({
