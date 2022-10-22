@@ -84,7 +84,7 @@ user.activation = {
 			})
 		], "centered"));
 	},
-	setter: function(u, updater) {
+	setter: function(u, updater, buttname, buttclass) {
 		var ua = user.activation,
 			node = ua.node = CT.dom.div(null, "pt10");
 		ua.onconfirm = function() {
@@ -112,7 +112,7 @@ user.activation = {
 						}
 					})
 				})
-			] : CT.dom.button("switch to SMS notifications", ua.sms));
+			] : CT.dom.button(buttname || "switch to SMS notifications", ua.sms, buttclass));
 		};
 		node.refresh();
 		return node;
