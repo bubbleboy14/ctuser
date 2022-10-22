@@ -63,7 +63,7 @@ CT.onload(function() {
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password",
 					blurs: blurs.password2, classname: clz.pw2 }),
 				img = CT.db.edit.media({ data: u, cb: user.core.update,
-					className: clz.img || "wm1-3 right up50" });
+					parentClass: clz.img || "wm1-3 right" });
 			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true,
 				classname: clz.blurb || "w1", blurs: blurs.blurb, value: u.blurb });
 			if (modopts) {
@@ -89,7 +89,7 @@ CT.onload(function() {
 				new CT.cc.Switcher({ node: ccnode });
 			}
 			var connodes = [
-				base.map(function(p) {
+				img, base.map(function(p) {
 					fields[p] = CT.dom.smartField(CT.merge({
 						id: p,
 						cb: tryIt,
@@ -98,7 +98,7 @@ CT.onload(function() {
 						classname: clz[p]
 					}, fopts[p]));
 					return fields[p];
-				}), [pw, pw2], img, fields.blurb, extras
+				}), [pw, pw2], fields.blurb, extras
 			];
 			pcfg.nohi || connodes.unshift(greeting);
 			pcfg.delMem && connodes.push(CT.dom.button("delete account", function() {
