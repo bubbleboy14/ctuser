@@ -104,7 +104,7 @@ CT.onload(function() {
 			connodes.push(fields.blurb);
 			connodes.push(extras);
 			pcfg.nohi || connodes.unshift(greeting);
-			pcfg.delMem && connodes.push(CT.dom.button("delete account", function() {
+			pcfg.delMem && connodes.push(CT.dom.button("Delete Account", function() {
 				confirm(pcfg.delMem) && CT.net.post({
 					spinner: true,
 					path: "/_user",
