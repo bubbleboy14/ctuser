@@ -73,17 +73,20 @@ def subscribe(email):
 def unsubscribe(email):
     email = unquote(email)
     log("unsubscribe: %s"%(email,))
-    if not Unsubscriber.query(Unsubscriber.email == email).get():
+    if not unsubber(email):
         Unsubscriber(email=email).put()
 
 def ununsubscribe(email):
     email = unquote(email)
     log("ununsubscribe: %s"%(email,))
-    u = Unsubscriber.query(Unsubscriber.email == email).get()
+    u = unsubber(email)
     u and u.rm()
 
+def unsubber(email):
+    return Unsubscriber.query(Unsubscriber.email == email).get()
+
 def pruneUnsubs(emails):
-    return [e for e in emails if not Unsubscriber.query(Unsubscriber.email == e).get()]
+    return [e for e in emails if not unsubber(e)]
 
 class Email(db.TimeStampedBase):
     subject = db.String()
@@ -131,10 +134,12 @@ class Email(db.TimeStampedBase):
         lrecips = len(self.recipients)
 #        send_mail(bcc=recips, subject=self.subject, body=self.body) # disabled bcc -- too many bounces!
         for recip in recips:
-            send_mail(to=recip, subject=self.subject, body=self.procbod(recip))
+            if unsubber(recip):
+                log("skipping Unsubscriber: %s"%(recip,), important=True)
+            else:
+                send_mail(to=recip, subject=self.subject, body=self.procbod(recip))
         self.progress += lbatch
-        log("sent to %s recipients (%s/%s)"%(lbatch,
-            self.progress, lrecips))
+        log("sent to %s recipients (%s/%s)"%(lbatch, self.progress, lrecips))
         if self.progress == len(self.recipients):
             cc = config.ctuser.email.cc
             if cc:
