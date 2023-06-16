@@ -19,7 +19,8 @@ cfg = {
 		"unsub": True,
 		"groups": {},
 		"chunk": 5,
-		"bulksize": 1000
+		"bulksize": 1000,
+		"unsubrefused": True
 	}
 }
 util = """
