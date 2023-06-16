@@ -5,7 +5,7 @@ except:
 from datetime import datetime
 from cantools import db, config
 from cantools.util import log
-from cantools.web import send_mail, send_sms
+from cantools.web import send_mail, send_sms, email_admins, mailer
 
 class CTUser(db.TimeStampedBase):
     active = db.Boolean(default=False)
@@ -87,6 +87,13 @@ def unsubber(email):
 
 def pruneUnsubs(emails):
     return [e for e in emails if not unsubber(e)]
+
+def unsubrefused(email):
+    unsubscribe(email)
+    email_admins("refused recipient unsubscribed", email)
+
+if config.ctuser.email.unsubrefused:
+    mailer.on("refused", unsubrefused)
 
 class Email(db.TimeStampedBase):
     subject = db.String()
