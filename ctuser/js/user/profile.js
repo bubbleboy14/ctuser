@@ -80,6 +80,18 @@ user.profile = {
 			return CT.db.edit.input(p, _.schema[p], u[p],
 				u.modelName, { key: u.key, label: true });
 		},
+		handles: function() {
+			var _ = user.profile._, cont = CT.dom.div(), wrapper = CT.dom.div([
+
+				CT.dom.button("reorder", function() {
+
+				}, "right"),
+				cont
+			], "bordered padded margined round");
+			wrapper.update = () => CT.dom.setContent(cont, _.input("handles"));
+			wrapper.update();
+			return wrapper;
+		},
 		extras: function() {
 			var _ = user.profile._, u = user.core.get(), extras = [],
 				modopts = _.modopts, fields = _.fields;
@@ -96,8 +108,7 @@ user.profile = {
 				extras.push((p == "sms") ? user.activation.setter(u,
 					_.edit, pcfg.smsbutt, pcfg.classes.sms) : _.input(p));
 			}
-			pcfg.handles && extras.push(CT.dom.div(_.input("handles"),
-				"bordered padded margined round"));
+			pcfg.handles && extras.push(_.handles());
 			if (pcfg.cc) {
 				var ccnode = CT.dom.div();
 				extras.push(ccnode);
