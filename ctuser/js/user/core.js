@@ -408,8 +408,8 @@ user.core = {
 			user.core.update();
 			CT.net.post({
 				path: "/_user",
-				action: "edit",
 				params: {
+					action: "edit",
 					user: u.key,
 					changes: {
 						handles: u.handles
