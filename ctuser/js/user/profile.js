@@ -1,9 +1,5 @@
 var pcfg = core.config.ctuser.profile;
 pcfg.cc && CT.require("CT.cc", true);
-if (!pcfg.fopts)
-	pcfg.fopts = {};
-if (!pcfg.classes)
-	pcfg.classes = {};
 
 user.profile = {
 	_: {
@@ -136,6 +132,15 @@ user.profile = {
 			if (pcfg.custom)
 				connodes = connodes.concat(pcfg.custom());
 			return CT.dom.div(connodes, "padded");
+		},
+		ipcfg: function() {
+			var omit = pcfg.omit;
+			omit.includes("cc") || omit.push("cc"); // handled differently...
+			omit.includes("handles") || omit.push("handles");
+			if (!pcfg.fopts)
+				pcfg.fopts = {};
+			if (!pcfg.classes)
+				pcfg.classes = {};
 		}
 	},
 	view: function(ukey) {
@@ -143,9 +148,8 @@ user.profile = {
 		CT.db.one(ukey, data => CT.dom.addMain(CT.layout.profile(user.core.prep(data))));
 	},
 	edit: function() {
-		var _ = user.profile._, omit = pcfg.omit;
-		omit.includes("cc") || omit.push("cc"); // handled differently...
-		omit.includes("handles") || omit.push("handles");
+		var _ = user.profile._;
+		_.ipcfg();
 		CT.db.withSchema(fullSchema => CT.dom.addMain(_.form(fullSchema)));
 	},
 	init: function() {
