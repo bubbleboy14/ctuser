@@ -391,6 +391,16 @@ user.core = {
 	handle: function(convo, cb) {
 		convo.anonymous ? user.core.setHandle(cb) : cb();
 	},
+	handleSetter: function() {
+		var uc = user.core, cur = CT.dom.span(null, "bold"),
+			up = handle => CT.dom.setContent(cur, handle);
+		up(uc.get("handles")[0] || "(unset)");
+		return CT.dom.div([
+			CT.dom.span("Current handle:"),
+			CT.dom.pad(), cur, CT.dom.pad(),
+			CT.dom.link("change", () => uc.setHandle(up, true))
+		]);
+	},
 	setHandle: function(cb, reorder) {
 		var u = user.core.get(), up = function(handle) {
 			CT.data.remove(u.handles, handle);
