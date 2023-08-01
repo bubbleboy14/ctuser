@@ -20,6 +20,7 @@ class CTUser(db.TimeStampedBase):
     img = db.Binary()
     label = "firstName"
     _data_omit = ["password"]
+    _unique_cols = ["handles"]
 
     def _trans_email(self, val):
         return val.lower()
