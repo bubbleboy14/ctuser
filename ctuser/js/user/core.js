@@ -403,20 +403,29 @@ user.core = {
 	},
 	setHandle: function(cb, reorder) {
 		var u = user.core.get(), up = function(handle) {
-			CT.data.remove(u.handles, handle);
-			u.handles.unshift(handle);
-			user.core.update();
+			var newhands = u.handles.slice();
+			CT.data.remove(newhands, handle);
+			newhands.unshift(handle);
 			CT.net.post({
 				path: "/_user",
 				params: {
 					action: "edit",
 					user: u.key,
 					changes: {
-						handles: u.handles
+						handles: newhands
 					}
+				},
+				cb: function() {
+					u.handles = newhands;
+					user.core.update();
+					cb(handle);
+				},
+				eb: function(emsg) {
+					alert("failure setting handle: " + emsg +
+						" - someone else must already be using that handle,"
+						+ " try something else!")
 				}
 			});
-			cb(handle);
 		};
 		CT.modal.choice({
 			prompt: "please select your handle",
