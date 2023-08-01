@@ -118,7 +118,9 @@ def response():
     elif action == "edit":
         changes = cgi_get("changes")
         changes["key"] = cgi_get("user")
-        edit(changes)
+        eres = edit(changes)
+        if type(eres) == str:
+            fail(eres)
     elif action == "feedback":
         send_mail(to=ucfg.feedback, subject="feedback",
             body="%s\n\nemail: %s"%(cgi_get("feedback"), cgi_get("email")))
