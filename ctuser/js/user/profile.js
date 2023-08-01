@@ -52,7 +52,7 @@ user.profile = {
 						changes.password = pwv;
 					}
 					subform(changes);
-				}, greeting = CT.dom.node("Hello, " + u.firstName, "div", "biggerest"),
+				}, greeting = CT.dom.div("Hello, " + u.firstName, "biggerest"),
 				pw = CT.dom.smartField({ id: "pw", cb: tryIt, type: "password",
 					blurs: blurs.password, classname: clz.pw }),
 				pw2 = CT.dom.smartField({ id: "pw2", cb: tryIt, type: "password",
@@ -95,7 +95,7 @@ user.profile = {
 					return fields[p];
 				}), [pw, pw2]
 			];
-			pcfg.blurbtitle && connodes.push(CT.dom.div(pcfg.blurbtitle, clz.blurbtitle))
+			pcfg.blurbtitle && connodes.push(CT.dom.div(pcfg.blurbtitle, clz.blurbtitle));
 			connodes.push(fields.blurb);
 			connodes.push(extras);
 			pcfg.nohi || connodes.unshift(greeting);
@@ -118,7 +118,7 @@ user.profile = {
 			connodes.push(CT.dom.button("Update", tryIt, clz.upbutt));
 			if (pcfg.custom)
 				connodes = connodes.concat(pcfg.custom());
-			CT.dom.addContent("ctmain", CT.dom.node(connodes, "div", "padded"));
+			CT.dom.addContent("ctmain", CT.dom.div(connodes, "padded"));
 		});
 	},
 	init: function() {
