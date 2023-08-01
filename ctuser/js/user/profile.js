@@ -89,6 +89,7 @@ user.profile = {
 		var _ = user.profile._, omit = pcfg.omit,
 			base = ["firstName", "lastName", "email"];
 		omit.includes("cc") || omit.push("cc"); // handled differently...
+		omit.includes("handles") || omit.push("handles");
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(), extras = [],
 				schema = fullSchema[u.modelName],
@@ -122,6 +123,9 @@ user.profile = {
 					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
 				extras.push(i);
 			}
+			pcfg.handles && extras.push(CT.dom.div(CT.db.edit.input("handles",
+				"list", u.handles, u.modelName, { key: u.key,
+				label: true }), "bordered padded margined round"));
 			if (pcfg.cc) {
 				var ccnode = CT.dom.div();
 				extras.push(ccnode);
