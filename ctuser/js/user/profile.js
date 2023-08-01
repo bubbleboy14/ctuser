@@ -77,6 +77,11 @@ user.profile = {
 				classname: pcfg.classes[p]
 			}, pcfg.fopts[p]));
 			return fields[p];
+		},
+		input: function(p) {
+			var _ = user.profile._, u = user.core.get();
+			return CT.db.edit.input(p, _.schema[p], u[p],
+				u.modelName, { key: u.key, label: true });
 		}
 	},
 	view: function(ukey) {
@@ -92,7 +97,7 @@ user.profile = {
 		omit.includes("handles") || omit.push("handles");
 		CT.db.withSchema(function(fullSchema) {
 			var u = user.core.get(), extras = [],
-				schema = fullSchema[u.modelName],
+				schema = _.schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = _.modopts = model[u.modelName] || model["*"],
 				blurs = pcfg.blurs, clz = pcfg.classes,
@@ -116,16 +121,11 @@ user.profile = {
 				if ((p in fields) || (omit.indexOf(p) != -1) || (base.indexOf(p) != -1)
 					|| (modopts && modopts.checkboxes && (p in modopts.checkboxes)))
 					continue;
-				var ptype = schema[p], i;
-				if (p == "sms")
-					i = user.activation.setter(u, _.edit, pcfg.smsbutt, clz.sms);
-				else
-					i = CT.db.edit.input(p, ptype, u[p], u.modelName, { key: u.key, label: true });
-				extras.push(i);
+				extras.push((p == "sms") ? user.activation.setter(u,
+					_.edit, pcfg.smsbutt, clz.sms) : _.input(p));
 			}
-			pcfg.handles && extras.push(CT.dom.div(CT.db.edit.input("handles",
-				"list", u.handles, u.modelName, { key: u.key,
-				label: true }), "bordered padded margined round"));
+			pcfg.handles && extras.push(CT.dom.div(_.input("handles"),
+				"bordered padded margined round"));
 			if (pcfg.cc) {
 				var ccnode = CT.dom.div();
 				extras.push(ccnode);
