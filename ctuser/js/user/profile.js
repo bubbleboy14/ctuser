@@ -8,6 +8,7 @@ if (!pcfg.classes)
 user.profile = {
 	_: {
 		nodes: {},
+		base: ["firstName", "lastName", "email"],
 		edit: function(changes) {
 			var _ = user.profile._, u = user.core.get();
 			CT.net.post("/_user", {
@@ -50,7 +51,7 @@ user.profile = {
 			}
 			_.edit(changes);
 		},
-		delAcc: function() {
+		del: function() {
 			var u = user.core.get();
 			confirm(pcfg.delMem) && CT.net.post({
 				spinner: true,
@@ -82,21 +83,34 @@ user.profile = {
 			var _ = user.profile._, u = user.core.get();
 			return CT.db.edit.input(p, _.schema[p], u[p],
 				u.modelName, { key: u.key, label: true });
-		}
-	},
-	view: function(ukey) {
-		document.body.classList.add("ctuser-profile-view");
-		CT.db.one(ukey, function(data) {
-			CT.dom.addContent("ctmain", CT.layout.profile(user.core.prep(data)));
-		});
-	},
-	edit: function() {
-		var _ = user.profile._, omit = pcfg.omit,
-			base = ["firstName", "lastName", "email"];
-		omit.includes("cc") || omit.push("cc"); // handled differently...
-		omit.includes("handles") || omit.push("handles");
-		CT.db.withSchema(function(fullSchema) {
-			var u = user.core.get(), extras = [],
+		},
+		extras: function() {
+			var _ = user.profile._, u = user.core.get(), extras = [],
+				modopts = _.modopts, fields = _.fields;
+			if (modopts) {
+				user.core.fields(modopts, extras, true);
+				if (modopts.selects)
+					for (var s in modopts.selects)
+						fields[s] = modopts.selects[s].node;
+			}
+			for (var p in _.schema) {
+				if ((p in fields) || (pcfg.omit.indexOf(p) != -1) || (_.base.indexOf(p) != -1)
+					|| (modopts && modopts.checkboxes && (p in modopts.checkboxes)))
+					continue;
+				extras.push((p == "sms") ? user.activation.setter(u,
+					_.edit, pcfg.smsbutt, pcfg.classes.sms) : _.input(p));
+			}
+			pcfg.handles && extras.push(CT.dom.div(_.input("handles"),
+				"bordered padded margined round"));
+			if (pcfg.cc) {
+				var ccnode = CT.dom.div();
+				extras.push(ccnode);
+				new CT.cc.Switcher({ node: ccnode });
+			}
+			return extras;
+		},
+		form: function(fullSchema) {
+			var _ = user.profile._, u = user.core.get();
 				schema = _.schema = fullSchema[u.modelName],
 				model = core.config.ctuser.model,
 				modopts = _.modopts = model[u.modelName] || model["*"],
@@ -111,38 +125,28 @@ user.profile = {
 					parentClass: clz.img || "wm1-3 right" });
 			fields.blurb = CT.dom.smartField({ id: "blurb", isTA: true,
 				classname: clz.blurb || "w1", blurs: blurs.blurb, value: u.blurb });
-			if (modopts) {
-				user.core.fields(modopts, extras, true);
-				if (modopts.selects)
-					for (var s in modopts.selects)
-						fields[s] = modopts.selects[s].node;
-			}
-			for (var p in schema) {
-				if ((p in fields) || (omit.indexOf(p) != -1) || (base.indexOf(p) != -1)
-					|| (modopts && modopts.checkboxes && (p in modopts.checkboxes)))
-					continue;
-				extras.push((p == "sms") ? user.activation.setter(u,
-					_.edit, pcfg.smsbutt, clz.sms) : _.input(p));
-			}
-			pcfg.handles && extras.push(CT.dom.div(_.input("handles"),
-				"bordered padded margined round"));
-			if (pcfg.cc) {
-				var ccnode = CT.dom.div();
-				extras.push(ccnode);
-				new CT.cc.Switcher({ node: ccnode });
-			}
-			var connodes = [img, base.map(_.field), [pw, pw2]];
+			var connodes = [img, _.base.map(_.field), [pw, pw2]];
 			pcfg.blurbtitle && connodes.push(CT.dom.div(pcfg.blurbtitle, clz.blurbtitle));
 			connodes.push(fields.blurb);
-			connodes.push(extras);
+			connodes.push(_.extras());
 			pcfg.nohi || connodes.unshift(greeting);
 			pcfg.delMem && connodes.push(CT.dom.button("Delete Account",
-				_.delAcc, clz.delbutt || "right red"));
+				_.del, clz.delbutt || "right red"));
 			connodes.push(CT.dom.button("Update", tryIt, clz.upbutt));
 			if (pcfg.custom)
 				connodes = connodes.concat(pcfg.custom());
-			CT.dom.addContent("ctmain", CT.dom.div(connodes, "padded"));
-		});
+			return CT.dom.div(connodes, "padded");
+		}
+	},
+	view: function(ukey) {
+		document.body.classList.add("ctuser-profile-view");
+		CT.db.one(ukey, data => CT.dom.addMain(CT.layout.profile(user.core.prep(data))));
+	},
+	edit: function() {
+		var _ = user.profile._, omit = pcfg.omit;
+		omit.includes("cc") || omit.push("cc"); // handled differently...
+		omit.includes("handles") || omit.push("handles");
+		CT.db.withSchema(fullSchema => CT.dom.addMain(_.form(fullSchema)));
 	},
 	init: function() {
 		location.hash ? user.profile.view(location.hash.slice(1))
