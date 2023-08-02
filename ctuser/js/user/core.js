@@ -389,9 +389,44 @@ user.core = {
 		}
 	},
 	handle: function(convo, cb) {
-		if (!convo.anonymous)
-			return cb();
-		var u = user.core.get();
+		convo.anonymous ? user.core.setHandle(cb) : cb();
+	},
+	handleSetter: function() {
+		var uc = user.core, cur = CT.dom.span(null, "bold"),
+			up = handle => CT.dom.setContent(cur, handle);
+		up(uc.get("handles")[0] || "(unset)");
+		return CT.dom.div([
+			CT.dom.span("Current handle:"),
+			CT.dom.pad(), cur, CT.dom.pad(),
+			CT.dom.link("change", () => uc.setHandle(up, true))
+		]);
+	},
+	setHandle: function(cb, reorder) {
+		var u = user.core.get(), up = function(handle) {
+			var newhands = u.handles.slice();
+			CT.data.remove(newhands, handle);
+			newhands.unshift(handle);
+			CT.net.post({
+				path: "/_user",
+				params: {
+					action: "edit",
+					user: u.key,
+					changes: {
+						handles: newhands
+					}
+				},
+				cb: function() {
+					u.handles = newhands;
+					user.core.update();
+					cb(handle);
+				},
+				eb: function(emsg) {
+					alert("failure setting handle: " + emsg +
+						" - someone else must already be using that handle,"
+						+ " try something else!")
+				}
+			});
+		};
 		CT.modal.choice({
 			prompt: "please select your handle",
 			data: ["new handle"].concat(u.handles),
@@ -399,72 +434,59 @@ user.core = {
 				if (handle == "new handle") {
 					CT.modal.prompt({
 						prompt: "cool, what's the new handle?",
-						cb: function(handle) {
-							u.handles.push(handle);
-							var changes = { handles: u.handles };
-							user.core.update(changes);
-							CT.net.post({
-								path: "/_user",
-								action: "edit",
-								params: {
-									user: u.key,
-									changes: changes
-								}
-							});
-							cb(handle);
-						}
+						cb: up
 					});
 				} else
-					cb(handle);
+					(reorder && handle != u.handles[0]) ? up(handle) : cb(handle);
 			}
 		});
 	},
 	buildConvo: function(convo, topical) {
 		var n = CT.dom.node(), newMsg = function(m) {
-				return [
-					m.handle ? CT.dom.span(m.handle, "bold anoname")
-						: user.core.fullName(CT.data.get(m.sender), true),
-					CT.dom.pad(),
-					CT.dom.span(m.body)
-				];
-			}, viewConvo = function() {
-				var mnode = CT.dom.node(convo.messages.map(newMsg)),
-					inode = CT.dom.smartField({
-						classname: "w19-20",
-						blurs: core.config.ctuser.messages.blurs.message,
-						cb: function(val) {
-							val && user.core.handle(convo, function(handle) {
-								CT.net.post("/_user", {
-									action: "contact",
-									user: user.core._.current.key,
+			return [
+				m.handle ? CT.dom.span(m.handle, "bold anoname")
+					: user.core.fullName(CT.data.get(m.sender), true),
+				CT.dom.pad(),
+				CT.dom.span(m.body)
+			];
+		}, viewConvo = function() {
+			var mnode = CT.dom.node(convo.messages.map(newMsg)),
+				inode = CT.dom.smartField({
+					classname: "w19-20",
+					blurs: core.config.ctuser.messages.blurs.message,
+					cb: function(val) {
+						val && user.core.handle(convo, function(handle) {
+							CT.net.post("/_user", {
+								action: "contact",
+								user: user.core._.current.key,
+								conversation: convo.key,
+								message: val,
+								handle: handle,
+								update_participants: topical
+							}, "comment failed!", function(mkey) {
+								var d = {
+									key: mkey,
+									sender: user.core._.current.key,
 									conversation: convo.key,
-									message: val,
-									handle: handle,
-									update_participants: topical
-								}, "comment failed!", function(mkey) {
-									var d = {
-										key: mkey,
-										sender: user.core._.current.key,
-										conversation: convo.key,
-										body: val,
-										handle: handle
-									};
-									CT.data.add(d);
-									convo.messages.push(d);
-									CT.dom.addContent(mnode, newMsg(d));
-									inode.value = "";
-									inode.blur();
-								});
+									body: val,
+									handle: handle
+								};
+								CT.data.add(d);
+								convo.messages.push(d);
+								CT.dom.addContent(mnode, newMsg(d));
+								inode.value = "";
+								inode.blur();
 							});
-						}
-					});
-				CT.dom.setContent(n, [
-					CT.dom.div(topical ? "Conversation" : convo.topic,
-						"big bold pv10"),
-					mnode,
-					inode
-				]);
-			};
+						});
+					}
+				});
+			CT.dom.setContent(n, [
+				CT.dom.div(topical ? "Conversation" : convo.topic,
+					"big bold pv10"),
+				mnode,
+				inode
+			]);
+		};
 		if (convo.messages)
 			viewConvo();
 		else {

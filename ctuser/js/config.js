@@ -44,11 +44,8 @@
 			"lastName": ["last name"],
 			"blurb": ["tell us about yourself"]
 		},
-		"classes": {
-		},
-		"fopts": {
-
-		}
+		"classes": {},
+		"fopts": {}
 	},
 	"login": {
 		"jlink": true,
