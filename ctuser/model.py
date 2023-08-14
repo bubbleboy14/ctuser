@@ -48,6 +48,10 @@ def getMem(email, password, yes, no, datify=False, key=None):
         no()
     yes(datify and u.data() or u)
 
+class Tag(db.TimeStampedBase):
+    name = db.String()
+    # helpful especially for providing tagging options
+
 class Conversation(db.TimeStampedBase):
     participants = db.ForeignKey(kind=CTUser, repeated=True)
     topic = db.String()
