@@ -132,7 +132,7 @@ def response():
         ununsubscribe(cgi_get("email"))
     elif action == "esched":
         if ecfg.scheduler:
-            succeed(fetch("https://%s/_user?action=esched"%(ecfg.scheduler,), ctjson=True))
+            succeed(fetch("https://%s/_user?action=esched"%(ecfg.scheduler,), timeout=2, ctjson=True))
         else:
             succeed([e.simple() for e in Email.query(Email.schedule != None).order(-Email.created).all()])
     elif action == "email":
