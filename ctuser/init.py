@@ -20,6 +20,7 @@ cfg = {
 		"groups": {},
 		"chunk": 5,
 		"bulksize": 1000,
+		"breakstrip": True,
 		"unsubrefused": True
 	}
 }

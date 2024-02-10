@@ -133,6 +133,8 @@ class Email(db.TimeStampedBase):
 
     def procbod(self, email):
         bod = self.body
+        if config.ctuser.email.breakstrip:
+            bod = bod.replace("\n", "")
         if self.header:
             bod = "%s\n\n%s"%(Email.headers[self.header](), bod)
         if self.footer:
