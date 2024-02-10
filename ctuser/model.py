@@ -136,9 +136,9 @@ class Email(db.TimeStampedBase):
         if config.ctuser.email.breakstrip:
             bod = bod.replace("\n", "")
         if self.header:
-            bod = "%s\n\n%s"%(Email.headers[self.header](), bod)
+            bod = "%s\n%s"%(Email.headers[self.header](), bod)
         if self.footer:
-            bod = "%s\n\n%s"%(bod, Email.footers[self.footer](email))
+            bod = "%s\n%s"%(bod, Email.footers[self.footer](email))
         return bod
 
     def process(self):
