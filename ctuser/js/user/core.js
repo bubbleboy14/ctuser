@@ -1,15 +1,16 @@
 user.core = {
 	_: {
-		messages: core.config.ctuser.alerts || {
+		messages: CT.merge(core.config.ctuser.alerts, {
 			join: "great! now just check your inbox for a welcome email, click the activation link, and log in.",
 			login: "great, you're logged in",
+			apw: "blank stare",
 			forgot: "we've emailed you your new password (a random, temporary value). don't forget to change it!"
-		},
-		linkNames: core.config.ctuser.loggers || {
+		}),
+		linkNames: CT.merge(core.config.ctuser.loggers, {
 			login: "login",
 			logout: "logout",
 			join: "join"
-		},
+		}),
 		userType: function(opts) {
 			CT.modal.prompt({
 				noClose: true,
@@ -331,10 +332,27 @@ user.core = {
 	setAction: function(aname, cb) {
 		user.core._.login_links.opts[aname] = cb;
 	},
+	aChek: function() {
+		var p = CT.storage.get("apw");
+		if (!p) {
+			p = prompt(user.core._.messages.apw);
+			CT.storage.set("apw", p);
+		}
+		return CT.net.post({
+			sync: true,
+			path: "/_user",
+			params: {
+				action: "achek",
+				apw: p
+			}
+		});
+	},
 	meetsRule: function(rule) {
-		// rule options: true, false, "user", "admin", "modelName", ["modelName1", "modelName2"]
+		// rule options: true, false, "user", "admin", "apw", "modelName", ["modelName1", "modelName2"]
 		if (rule == false || rule == true)
 			return rule;
+		if (rule == "apw")
+			return user.core.aChek();
 		var u = user.core.get();
 		if (!u)
 			return false;
