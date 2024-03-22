@@ -25,8 +25,12 @@ def bulk_recips(ebase):
     return list(map(lambda w : "%s+%s@gmail.com"%(ebase, w), recips[:ecfg.bulksize]))
 
 def response():
-    action = cgi_get("action", choices=["join", "activate", "login", "contact", "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha", "sms", "reset", "feedback", "egal", "esched", "delmem"])
-    if action == "delmem": # self only!
+    action = cgi_get("action", choices=["join", "activate", "login", "contact",
+        "edit", "email", "subscribe", "unsubscribe", "ununsubscribe", "recaptcha",
+        "sms", "reset", "feedback", "egal", "esched", "delmem", "achek"])
+    if action == "achek":
+        succeed(cgi_get("apw") == config.cache("admin password? "))
+    elif action == "delmem": # self only!
         getMem(cgi_get("e"), cgi_get("p"), lambda u : u.rm(), fail, key=cgi_get("k"))
     elif action == "egal":
         egp = os.path.join("img", "egal")
