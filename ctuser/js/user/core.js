@@ -336,6 +336,7 @@ user.core = {
 		var p = CT.storage.get("apw");
 		if (!p) {
 			p = prompt(user.core._.messages.apw);
+			if (!p) return false;
 			CT.storage.set("apw", p);
 		}
 		return CT.net.post({
