@@ -134,8 +134,12 @@ user.core = {
 				alert(user.core._.messages.join);
 				if (!nologin)
 					user.core._.login(data);
-				if (postRedir)
-					window.location = postRedir;
+				if (postRedir) {
+					if (typeof postRedir == "string")
+						window.location = postRedir;
+					else
+						postRedir(data);
+				}
 			});
 			jmodal.hide();
 		}, tryIt = function() {
