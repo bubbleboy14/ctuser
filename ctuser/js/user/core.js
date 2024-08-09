@@ -122,7 +122,7 @@ user.core = {
 				password: pw.value,
 				firstName: firstName.value,
 				lastName: lastName.value,
-				extras: {}
+				extras: CT.merge(opts.extras)
 			};
 			for (var f in opts.fields)
 				params.extras[f] = CT.dom.getFieldValue(opts.fields[f].node);
