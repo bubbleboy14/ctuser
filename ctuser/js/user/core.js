@@ -336,10 +336,10 @@ user.core = {
 	setAction: function(aname, cb) {
 		user.core._.login_links.opts[aname] = cb;
 	},
-	aChek: function() {
-		var p = CT.storage.get("apw");
+	aChek: function(retrying) {
+		var uc = user.core, p = !retrying && CT.storage.get("apw");
 		if (!p) {
-			p = prompt(user.core._.messages.apw);
+			p = prompt(uc._.messages.apw);
 			if (!p) return false;
 			CT.storage.set("apw", p);
 		}
@@ -350,7 +350,7 @@ user.core = {
 				action: "achek",
 				apw: p
 			}
-		});
+		}) || (!core.config.ctuser.hardapw && !retrying && uc.aChek(true));
 	},
 	meetsRule: function(rule) {
 		// rule options: true, false, "user", "admin", "apw", "modelName", ["modelName1", "modelName2"]
