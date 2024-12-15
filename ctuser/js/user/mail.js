@@ -55,6 +55,7 @@ user.mail = {
 	loadgal: function(egalist) {
 		CT.net.post({
 			path: "/_user",
+			spinner: true,
 			params: {
 				action: "egal"
 			},
