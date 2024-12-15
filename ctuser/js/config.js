@@ -88,6 +88,7 @@
 	"autoEdit": true,
 	"email": {
 		"any_recips": false,
+		"autogal": false,
 		"groups": []
 	},
 	"alerts": {

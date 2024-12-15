@@ -52,34 +52,37 @@ user.mail = {
 			});
 		}, "right relative mosthigh");
 	},
-	gallery: function() {
-		var egal = CT.dom.div(null, "abs b0 l0 r0 h1-3 scrolly");
+	loadgal: function(egalist) {
 		CT.net.post({
 			path: "/_user",
 			params: {
 				action: "egal"
 			},
-			cb: function(gals) {
-				var egalist = CT.dom.div(gals.map(user.mail.img));
-				CT.dom.setContent(egal, [
-					CT.dom.button("add image", function() {
-						CT.modal.prompt({
-							prompt: "please select the image",
-							style: "file",
-							cb: function(ctfile) {
-								ctfile.upload("/_user", function(iurl) {
-									CT.dom.addContent(egalist, user.mail.img(iurl));
-								}, {
-									action: "egal"
-								});
-							}
-						});
-					}, "right"),
-					egalist
-				]);
-			}
+			cb: gals => CT.dom.setContent(egalist, gals.map(user.mail.img))
 		});
-		return egal;
+	},
+	gallery: function() {
+		var um = user.mail, egalist = CT.dom.div(), cont = [
+			CT.dom.button("add image", function() {
+				CT.modal.prompt({
+					prompt: "please select the image",
+					style: "file",
+					cb: function(ctfile) {
+						ctfile.upload("/_user", function(iurl) {
+							CT.dom.addContent(egalist, um.img(iurl));
+						}, {
+							action: "egal"
+						});
+					}
+				});
+			}, "right"),
+			egalist
+		], loader = () => um.loadgal(egalist);
+		if (core.config.ctuser.email.autogal)
+			loader();
+		else
+			cont.unshift(CT.dom.button("load gallery", loader, "right"));
+		return CT.dom.div(cont, "abs b0 l0 r0 h1-5 scrolly");
 	},
 	editor: function(mdata) {
 		var _ = user.mail._, subject = CT.dom.smartField({
@@ -196,7 +199,7 @@ user.mail = {
 				user.mail.schedule(),
 				CT.dom.div([
 					_.list, _.content
-				], "abs t0 r0 l0 h2-3"),
+				], "abs t0 r0 l0 h4-5"),
 				user.mail.gallery()
 			]);
 			CT.panel.triggerList(mailz, user.mail.editor, _.list);
