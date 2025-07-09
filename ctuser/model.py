@@ -178,7 +178,7 @@ def processEmails():
         Email.paused == True).all()
     if pauseds:
         log("found %s paused Email records"%(len(pauseds),))
-        if config.ctuser.email.unpause:
+        if not config.ctuser.email.staypaused:
             for p in pauseds:
                 if p.schedule and p.schedule <= now:
                     log("unpausing: %s"%(p.subject,))

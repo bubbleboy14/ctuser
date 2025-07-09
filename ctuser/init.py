@@ -16,7 +16,7 @@ cfg = {
 		"ctuser": "auto" # or "confirm" or "verify" or [email_address] -- requires config.mailer
 	},
 	"email": {
-		"unpause": False,
+		"staypaused": False,
 		"unsub": True,
 		"groups": {},
 		"chunk": 5,
