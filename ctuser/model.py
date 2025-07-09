@@ -178,10 +178,11 @@ def processEmails():
         Email.paused == True).all()
     if pauseds:
         log("found %s paused Email records"%(len(pauseds),))
-        for p in pauseds:
-            if p.schedule and p.schedule <= now:
-                log("unpausing: %s"%(p.subject,))
-                p.paused = False
-                p.put()
+        if config.ctuser.email.unpause:
+            for p in pauseds:
+                if p.schedule and p.schedule <= now:
+                    log("unpausing: %s"%(p.subject,))
+                    p.paused = False
+                    p.put()
     emails = Email.query(Email.complete == False, Email.paused == False).all()
     emails and sorted(emails, key=lambda e : len(e.recipients))[0].process()
