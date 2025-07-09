@@ -62,6 +62,26 @@ user.mail = {
 			cb: gals => CT.dom.setContent(egalist, gals.map(user.mail.img))
 		});
 	},
+	pauser: function(mdata) {
+		return CT.dom.checkboxAndLabel("paused" + mdata.key, mdata.paused, "paused", null, "right", function(cbox) {
+			var subaction = cbox.checked ? "pause" : "unpause";
+			if (!prompt("really " + subaction + " this email?")) {
+				cb.checked = mdata.paused; // reset
+				return;
+			}
+			mdata.paused = cbox.checked;
+			CT.net.post({
+				spinner: true,
+				path: "/_user",
+				params: {
+					key: mdata.key,
+					action: "email",
+					subaction: subaction
+				},
+				cb: () => alert("ok, you " + subaction + "d it")
+			});
+		});
+	},
 	gallery: function() {
 		var um = user.mail, egalist = CT.dom.div(), cont = [
 			CT.dom.button("add image", function() {
@@ -86,7 +106,7 @@ user.mail = {
 		return CT.dom.div(cont, "abs b0 l0 r0 h1-5 scrolly");
 	},
 	editor: function(mdata) {
-		var _ = user.mail._, subject = CT.dom.smartField({
+		var um = user.mail, _ = um._, subject = CT.dom.smartField({
 			classname: "w1",
 			value: mdata.subject,
 			blurs: ["subject", "title"]
@@ -98,30 +118,15 @@ user.mail = {
 			value: mdata.body,
 			classname: "w1 mt5 hmin200p",
 			blurs: ["email body", "write your message here"]
-		}), ecfg = core.config.ctuser.email,
+		}), status = !mdata.key && "unsaved" || (
+			mdata.complete ? "completed" : ((mdata.paused && !mdata.ttl) ? "paused" : "sending")
+		), ecfg = core.config.ctuser.email,
 			any_recips = ecfg && ecfg.any_recips,
 			egroups = ecfg && ecfg.groups || [
 		], verb = mdata.key ? (mdata.complete ? "resend" : "change") : "send", cont = [
 			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "bigger padded centered"),
 			subject, body,
-			mdata.key && CT.dom.checkboxAndLabel("paused" + (mdata.key || "email"), mdata.paused, "paused", null, "right", function(cbox) {
-				var subaction = cbox.checked ? "pause" : "unpause";
-				if (!prompt("really " + subaction + " this email?")) {
-					cb.checked = mdata.paused; // reset
-					return;
-				}
-				mdata.paused = cbox.checked;
-				CT.net.post({
-					spinner: true,
-					path: "/_user",
-					params: {
-						key: mdata.key,
-						action: "email",
-						subaction: subaction
-					},
-					cb: () => alert("ok, you " + subaction + "d it")
-				});
-			}),
+			(status == "sending") && um.pauser(mdata),
 			CT.dom.button(verb + " it!", function() {
 				var params = {
 					action: "email",
@@ -199,10 +204,10 @@ user.mail = {
 		];
 		if (mdata.key) {
 			cont.push(CT.dom.pad());
-			cont.push(CT.dom.span(mdata.complete ? "completed" : ((mdata.paused && !mdata.ttl) ? "paused" : "sending")));
+			cont.push(CT.dom.span(status));
 			if (mdata.ttl) {
 				cont.push(CT.dom.pad());
-				cont.push(CT.dom.span("on " + user.mail.ttl(mdata)));
+				cont.push(CT.dom.span("on " + um.ttl(mdata)));
 			}
 		}
 		CT.dom.setContent(_.content, CT.dom.div(cont, "padded"));
