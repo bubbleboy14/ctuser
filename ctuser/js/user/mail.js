@@ -104,6 +104,24 @@ user.mail = {
 		], verb = mdata.key ? (mdata.complete ? "resend" : "change") : "send", cont = [
 			CT.dom.div(mdata.key ? "Email Editor" : "Send an Email!", "bigger padded centered"),
 			subject, body,
+			mdata.key && CT.dom.checkboxAndLabel("paused" + (mdata.key || "email"), mdata.paused, "paused", null, "right", function(cbox) {
+				var subaction = cbox.checked ? "pause" : "unpause";
+				if (!prompt("really " + subaction + " this email?")) {
+					cb.checked = mdata.paused; // reset
+					return;
+				}
+				mdata.paused = cbox.checked;
+				CT.net.post({
+					spinner: true,
+					path: "/_user",
+					params: {
+						key: mdata.key,
+						action: "email",
+						subaction: subaction
+					},
+					cb: () => alert("ok, you " + subaction + "d it")
+				});
+			}),
 			CT.dom.button(verb + " it!", function() {
 				var params = {
 					action: "email",
