@@ -141,8 +141,19 @@ def response():
             succeed([e.simple() for e in Email.query(Email.schedule != None).order(-Email.created).all()])
     elif action == "email":
         sender = db.get(cgi_get("user"))
+        ekey = cgi_get("key", required=False)
         if not sender.admin:
             fail()
+        subaction = cgi_get("subaction", required=False)
+        if subaction:
+            log("applying " + subaction + " to Email " + ekey)
+            em = db.get(ekey)
+            if subaction == "pause":
+                em.paused = True
+            elif subaction == "unpause":
+                em.paused = False
+            em.put()
+            succeed()
         sub = cgi_get("subject")
         bod = cgi_get("body")
         group = cgi_get("group", required=False)
@@ -166,7 +177,6 @@ def response():
         recips = pruneUnsubs(recips)
         if delay or group or ecfg.unsub or len(recips) > 400: # requires mailer cron; supports footer
             log("group or footer or more than 400 recips - enqueueing Email record")
-            ekey = cgi_get("key", required=False)
             if ekey:
                 em = db.get(ekey)
                 em.subject = sub
@@ -185,7 +195,7 @@ def response():
                 em.schedule = datetime.now() + timedelta(0, delay)
             if em.complete:
                 log("resending completed email (resetting complete flag and progress counter)")
-                em.complete = False
+                em.complete = em.paused = False
                 em.progress = 0
             em.put()
             succeed(em.mindata())
