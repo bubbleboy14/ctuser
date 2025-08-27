@@ -345,6 +345,7 @@ user.core = {
 		}
 		return CT.net.post({
 			sync: true,
+			syncParse: true,
 			path: "/_user",
 			params: {
 				action: "achek",
